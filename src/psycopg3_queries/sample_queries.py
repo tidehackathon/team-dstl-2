@@ -10,22 +10,8 @@ with psycopg.connect(
     # Open a cursor to perform database operations
     with conn.cursor() as cur:
 
-        # Execute a command: this creates a new table
-        cur.execute("""
-            CREATE TABLE test (
-                id serial PRIMARY KEY,
-                num integer,
-                data text)
-            """)
-
-        # Pass data to fill a query placeholders and let Psycopg perform
-        # the correct conversion (no SQL injections!)
-        cur.execute(
-            "INSERT INTO test (num, data) VALUES (%s, %s)",
-            (100, "abc'def"))
-
         # Query the database and obtain data as Python objects.
-        cur.execute("SELECT * FROM test")
+        cur.execute("SELECT * FROM nations")
         cur.fetchone()
         # will return (1, 100, "abc'def")
 
