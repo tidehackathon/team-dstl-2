@@ -71,20 +71,99 @@ class NationForm(FlaskForm):
 @app.route('/', methods=['post', 'get'])
 def multi_Domain_Operations_By_Nation():
     # Initiate Program
+    # Nation Mapping Dictionary
+    nation_mapping = {
+        'Nation_1': 1,
+        'Nation_2': 2,
+        'Nation_3': 3,
+        'Nation_4': 4,
+        'Nation_5': 5,
+        'Nation_6': 6,
+        'Nation_7': 7,
+        'Nation_8': 8,
+        'Nation_9': 9,
+        'Nation_10': 10,
+        'Nation_11': 11,
+        'Nation_12': 12,
+        'Nation_13': 13,
+        'Nation_14': 14,
+        'Nation_15': 15,
+        'Nation_16': 16,
+        'Nation_17': 17,
+        'Nation_18': 18,
+        'Nation_19': 19,
+        'Nation_20': 20,
+        'Nation_21': 21,
+        'Nation_22': 22,
+        'Nation_23': 23,
+        'Nation_24': 24,
+        'Nation_25': 25,
+        'Nation_26': 26,
+        'Nation_27': 27,
+        'Nation_28': 28,
+        'Nation_29': 29,
+        'Nation_30': 30,
+        'Nation_31': 31,
+        'Nation_32': 32,
+        'Nation_33': 33,
+        'Nation_34': 34,
+        'Nation_35': 35,
+        'Nation_36': 36,
+        'Nation_37': 37,
+        'Nation_38': 38,
+        'Nation_39': 39,
+        'Nation_40': 40,
+        'Nation_41': 41,
+        'Nation_42': 42,
+        'Nation_43': 43,
+        'Nation_44': 44,
+        'Nation_45': 45,
+        'Nation_46': 46,
+        'Nation_47': 47,
+        'Nation_48': 48,
+        'Nation_49': 49,
+        'Nation_50': 50,
+        'Nation_51': 51,
+        'Nation_52': 52,
+        'Nation_53': 53,
+        'Nation_54': 54,
+        'Nation_55': 55,
+        'Nation_56': 56,
+        'Nation_57': 57,
+        'Nation_58': 58,
+        'Nation_59': 59,
+        'Nation_60': 60,
+        'Nation_61': 61,
+        'Nation_62': 62,
+        'Nation_63': 63,
+        'Nation_64': 64,
+        'Nation_65': 65,
+        'Nation_66': 66,
+        'Nation_67': 67,
+        'Nation_68': 68,
+        'Nation_69': 69,
+        'Nation_70': 70,
+    }
+    # Generate Form
     nation_form = NationForm()
+    # Initial Query
     query = "select t.name, c.name AS CAPABILITY_NAME, n.name AS NATION_NAME from tasks t inner join capability_tasks "\
             "ct on t.id = ct.task_id inner join capabilities c on c.id = ct.capability_id inner join nations n on "\
             "n.id = c.nation_id where t.id = 8 and n.id = "
-    # Form Validation
+    # Form Validation and automatic generation of user query
     if nation_form.validate_on_submit():
         print(nation_form.nationResult.data)
-        complete_query = query + ''.join(nation_form.nationResult.data)
-        return render_template("result.html", nationData=nation_form.nationResult.data, completeQuery=complete_query)
+        selected_nation = nation_form.nationResult.data
+        str_selected_nation = ''.join(selected_nation)
+        print(str_selected_nation)
+        complete_query = query + str(nation_mapping[str_selected_nation])
+
+        return render_template("multi_Domain_Operations_By_Nation_result.html", nationData=nation_form.nationResult.data, completeQuery=complete_query)
     else:
         print("Validation Failed")
         print("Nation Form Errors ", nation_form.errors)
 
-    return render_template('search.html', nationForm=nation_form)
+    return render_template('multi_Domain_Operations_By_Nation_search.html', nationForm=nation_form)
 
 # @app.route('/', methods=['post', 'get'])
 # def hello_world():
@@ -103,7 +182,7 @@ def multi_Domain_Operations_By_Nation():
 #         print(task_form.taskResult.data)
 #         print(domain_form.domainResult.data)
 #         print(warfare_form.warfareResult.data)
-#         return render_template("result.html", nationData=nation_form.nationResult.data,
+#         return render_template("multi_Domain_Operations_By_Nation_result.html", nationData=nation_form.nationResult.data,
 #                                exersiceData=exersice_form.exersiceResult.data, taskData=task_form.taskResult.data,
 #                                domainData=domain_form.domainResult.data, warfareData=warfare_form.warfareResult.data)
 #     else:
@@ -113,7 +192,7 @@ def multi_Domain_Operations_By_Nation():
 #         print("Task Form Errors ", task_form.errors)
 #         print("Domain Form Errors ", domain_form.errors)
 #         print("Warfare Form Errors ", warfare_form.errors)
-#     return render_template('search.html', nationForm=nation_form, exersiceForm=exersice_form, taskForm=task_form,
+#     return render_template('multi_Domain_Operations_By_Nation_search.html', nationForm=nation_form, exersiceForm=exersice_form, taskForm=task_form,
 #                            domainForm=domain_form, warfareForm=warfare_form)
 
 
