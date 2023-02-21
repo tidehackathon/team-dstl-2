@@ -147,16 +147,17 @@ def multi_Domain_Operations_By_Nation():
     # Generate Form
     nation_form = NationForm()
     # Initial Query
-    query = "select t.name, c.name AS CAPABILITY_NAME, n.name AS NATION_NAME from tasks t inner join capability_tasks "\
-            "ct on t.id = ct.task_id inner join capabilities c on c.id = ct.capability_id inner join nations n on "\
-            "n.id = c.nation_id where t.id = 8 and n.id = "
+    query = "select t.name as Task_Name, c.name AS CAPABILITY_NAME, c.maturity as Capability_Maturity, n.name" \
+            " AS NATION_NAME from tasks t inner join capability_tasks ct on t.id = ct.task_id inner join capabilities" \
+            " c on c.id = ct.capability_id inner join nations n on n.id = c.nation_id where t.id = "
+    query2 = " and n.id = "
     # Form Validation and automatic generation of user query
     if nation_form.validate_on_submit():
         print(nation_form.nationResult.data)
         selected_nation = nation_form.nationResult.data
         str_selected_nation = ''.join(selected_nation)
         print(str_selected_nation)
-        complete_query = query + str(nation_mapping[str_selected_nation])
+        complete_query = query + str(nation_mapping[str_selected_nation]) + query2 + str(nation_mapping[str_selected_nation])
 
         return render_template("multi_Domain_Operations_By_Nation_result.html", nationData=nation_form.nationResult.data, completeQuery=complete_query)
     else:
