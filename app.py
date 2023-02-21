@@ -60,38 +60,55 @@ class WarfareFrom(FlaskForm):
     warfareResult = MultiCheckboxField('Label', choices=files)
 
 
+class TableForm(FlaskForm):
+    string_of_tables = ['Capabilities\r\n']
+    list_of_tables = string_of_tables[0].split()
+    # create a list of value/description tuples
+    files = [(x, x) for x in list_of_tables]
+    tableResult = MultiCheckboxField('Label', choices=files)
+
+
 @app.route('/', methods=['post', 'get'])
 def hello_world():
-
     # Initiate Program
+    table_form = TableForm()
     nation_form = NationForm()
     exersice_form = ExersiceFrom()
     task_form = TaskFrom()
     domain_form = DomainFrom()
     warfare_form = WarfareFrom()
-    render_template('search.html', nationForm=nation_form, exersiceForm=exersice_form, taskForm=task_form,
-                    domainForm=domain_form, warfareForm=warfare_form)
 
-    # Form Validation
-    if nation_form.validate_on_submit() & exersice_form.validate_on_submit() & task_form.validate_on_submit() & \
-            domain_form.validate_on_submit() & warfare_form.validate_on_submit():
-        print(nation_form.nationResult.data)
-        print(exersice_form.exersiceResult.data)
-        print(task_form.taskResult.data)
-        print(domain_form.domainResult.data)
-        print(warfare_form.warfareResult.data)
-        return render_template("result.html", nationData=nation_form.nationResult.data,
-                               exersiceData=exersice_form.exersiceResult.data, taskData=task_form.taskResult.data,
-                               domainData=domain_form.domainResult.data, warfareData=warfare_form.warfareResult.data)
+    if table_form.validate_on_submit():
+        print(table_form.tableResult.data)
+        if table_form.tableResult.data == "Capabilities":
+            return render_template("capabilites.html")
+
     else:
         print("Validation Failed")
-        print("Nation Form Errors ", nation_form.errors)
-        print("Exersice Form Errors ", exersice_form.errors)
-        print("Task Form Errors ", task_form.errors)
-        print("Domain Form Errors ", domain_form.errors)
-        print("Warfare Form Errors ", warfare_form.errors)
-    return render_template('search.html', nationForm=nation_form, exersiceForm=exersice_form, taskForm=task_form,
-                           domainForm=domain_form, warfareForm=warfare_form)
+        print("Table Form Errors ", table_form.errors)
+    return render_template('table.html', tableForm=table_form)
+
+
+    # # Form Validation
+    # if nation_form.validate_on_submit() & exersice_form.validate_on_submit() & task_form.validate_on_submit() & \
+    #         domain_form.validate_on_submit() & warfare_form.validate_on_submit():
+    #     print(nation_form.nationResult.data)
+    #     print(exersice_form.exersiceResult.data)
+    #     print(task_form.taskResult.data)
+    #     print(domain_form.domainResult.data)
+    #     print(warfare_form.warfareResult.data)
+    #     return render_template("result.html", nationData=nation_form.nationResult.data,
+    #                            exersiceData=exersice_form.exersiceResult.data, taskData=task_form.taskResult.data,
+    #                            domainData=domain_form.domainResult.data, warfareData=warfare_form.warfareResult.data)
+    # else:
+    #     print("Validation Failed")
+    #     print("Nation Form Errors ", nation_form.errors)
+    #     print("Exersice Form Errors ", exersice_form.errors)
+    #     print("Task Form Errors ", task_form.errors)
+    #     print("Domain Form Errors ", domain_form.errors)
+    #     print("Warfare Form Errors ", warfare_form.errors)
+    # return render_template('search.html', nationForm=nation_form, exersiceForm=exersice_form, taskForm=task_form,
+    #                        domainForm=domain_form, warfareForm=warfare_form)
 
 
 if __name__ == '__main__':

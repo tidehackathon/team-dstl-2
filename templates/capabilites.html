@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Query Creator</title>
+</head>
+<body>
+    <h1>Query Creator</h1>
+    <p>
+        Nation Form Errors: {{ nationForm.errors }}
+    </p>
+    <p>
+        Name Form Errors: {{ capNameForm.errors }}
+    </p>
+    <p>
+        Maturity Form Errors: {{ maturityForm.errors }}
+    </p>
+    <form method="post">
+        <table>
+            <tr>
+                <th>Nation</th>
+                <th>Name</th>
+                <th>Maturity</th>
+            </tr>
+            <tr>
+                <td>{{ nationForm.hidden_tag() }} {{ nationForm.nationResult }}</td>
+                <td>{{ capNameForm.hidden_tag() }} {{ capNameForm.capNameResult }}</td>
+                <td>{{ maturityForm.hidden_tag() }} {{ maturityFrom.maturityResult }}</td>
+            </tr>
+        </table>
+        <p><button type="submit">Submit</button></p>
+    </form>
+</body>
+</html>
