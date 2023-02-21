@@ -2,16 +2,27 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Query Creator</title>
 </head>
 <body>
+    <h1>Query Creator</h1>
     <p>
-        {{ nationForm.errors }}
-        {{ exersiceForm.errors }}
-        {{ domainForm.errors }}
-        {{ warfareForm.errors }}
-        {{ taskForm.errors }}
+        Nation Form Errors: {{ nationForm.errors }}
     </p>
+    <p>
+        Exersice Form Errors: {{ exersiceForm.errors }}
+    </p>
+    <p>
+        Domain Form Errors: {{ domainForm.errors }}
+    </p>
+    <p>
+        Warfare Form Errors: {{ warfareForm.errors }}
+    </p>
+    <p>
+        Task Form Errors: {{ taskForm.errors }}
+    </p>
+
+
     <form method="post">
         <table>
             <tr>
