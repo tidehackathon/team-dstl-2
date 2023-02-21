@@ -25,14 +25,13 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 1,
   "links": [],
   "liveNow": false,
   "panels": [
     {
       "datasource": {
         "type": "postgres",
-        "uid": "JEjnc9J4z"
+        "uid": "P44368ADAD746BC27"
       },
       "fieldConfig": {
         "defaults": {
@@ -108,12 +107,12 @@
         {
           "datasource": {
             "type": "postgres",
-            "uid": "JEjnc9J4z"
+            "uid": "P44368ADAD746BC27"
           },
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT maturity, COUNT(*) FROM capabilities \nGROUP BY maturity;",
+          "rawSql": "SELECT maturity, COUNT(*) FROM capabilities GROUP BY maturity;",
           "refId": "A",
           "sql": {
             "columns": [
@@ -140,7 +139,7 @@
     {
       "datasource": {
         "type": "postgres",
-        "uid": "JEjnc9J4z"
+        "uid": "P44368ADAD746BC27"
       },
       "fieldConfig": {
         "defaults": {
@@ -191,7 +190,7 @@
         {
           "datasource": {
             "type": "postgres",
-            "uid": "JEjnc9J4z"
+            "uid": "P44368ADAD746BC27"
           },
           "editorMode": "code",
           "format": "table",
@@ -235,6 +234,6 @@
   "timezone": "",
   "title": "Dashboard_for_Interoperability_dstl-2",
   "uid": "1MB0c91Vz",
-  "version": 4,
+  "version": 1,
   "weekStart": ""
 }
