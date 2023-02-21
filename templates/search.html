@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <p>
+        {{ nationForm.errors }}
+        {{ exersiceForm.errors }}
+        {{ domainForm.errors }}
+        {{ warfareForm.errors }}
+        {{ taskForm.errors }}
+    </p>
+    <form method="post">
+        <table>
+            <tr>
+                <th>Nation</th>
+                <th>Exercise</th>
+                <th>Domain</th>
+                <th>Warfare Level</th>
+                <th>Task</th>
+            </tr>
+            <tr>
+                <td>{{ nationForm.hidden_tag() }} {{ nationForm.example }}</td>
+                <td>{{ exersiceForm.hidden_tag() }} {{ exersiceForm.example }}</td>
+                <td>{{ domainForm.hidden_tag() }} {{ domainForm.example }}</td>
+                <td>{{ warfareForm.hidden_tag() }} {{ warfareForm.example }}</td>
+                <td>{{ taskForm.hidden_tag() }} {{ taskForm.example }}</td>
+            </tr>
+        </table>
+        <p><button type="submit">Submit</button></p>
+    </form>
+</body>
+</html>
