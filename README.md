@@ -25,7 +25,7 @@ You will need to log in to grafana using the details below:
 
 Username:
 
-    qwerty
+    admin
 
 Password
 
