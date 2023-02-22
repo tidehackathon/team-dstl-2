@@ -35,12 +35,12 @@ def generate_table_panel_dict(sql_input, id):
     return panel_dict
 
 def add_table_panel_to_dashboard(sql_input, dashboard_dict):
-    # Find max panel id amonst existing panels
+    # Find max panel id amongst existing panels
     list_of_ids = list()
     for panel in dashboard_dict['dashboard']['panels']:
-        list_of_ids.append(panel[id])
+        list_of_ids.append(panel['id'])
     max_id = max(list_of_ids)
-    print("max id = ", max_id)
+    print("max id : ", max_id)
 
     dashboard_dict['dashboard']['panels'].append(
         generate_table_panel_dict(sql_input, max_id + 1)
