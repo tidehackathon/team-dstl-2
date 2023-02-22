@@ -25,53 +25,49 @@ class NationForm(FlaskForm):
     files = [(x, x) for x in list_of_nations]
     nationResult = MultiCheckboxField('Label', choices=files)
 
+    # class ExersiceFrom(FlaskForm):
+    #     string_of_exersices = ['CWIX_2021\r\nCWIX_2022\r\n']
+    #     list_of_exersices = string_of_exersices[0].split()
+    #     # create a list of value/description tuples
+    #     files = [(x, x) for x in list_of_exersices]
+    #     exersiceResult = MultiCheckboxField('Label', choices=files)
+    #
+    #
+    # class TaskFrom(FlaskForm):
+    #     string_of_tasks = ['Data_Centric_Security_Approach\r\nConformance_Testing\r\nDe-Risking_Coalition_Operations\r\n'
+    #                        'Data_Analytics\r\nConnecting_sensor_-_decision_maker_effector\r\n'
+    #                        'Federated_Mission_Networking\r\nMulti-Domain_Operations\r\nStandards_Violation\r\n']
+    #     list_of_tasks = string_of_tasks[0].split()
+    #     # create a list of value/description tuples
+    #     files = [(x, x) for x in list_of_tasks]
+    #     taskResult = MultiCheckboxField('Label', choices=files)
+    #
+    #
+    # class DomainFrom(FlaskForm):
+    #     string_of_domains = ['Air\nLand\r\nMaritime\r\nCyberspace\r\nSpace\r\nOther_Support_Services\r\n']
+    #     list_of_domains = string_of_domains[0].split()
+    #     # create a list of value/description tuples
+    #     files = [(x, x) for x in list_of_domains]
+    #     domainResult = MultiCheckboxField('Label', choices=files)
+    #
+    #
+    # class WarfareFrom(FlaskForm):
+    #     string_of_warfare = ['Strategic\nOperational\r\nDeployed\r\n']
+    #     list_of_warfare = string_of_warfare[0].split()
+    #     # create a list of value/description tuples
+    #     files = [(x, x) for x in list_of_warfare]
+    #     warfareResult = MultiCheckboxField('Label', choices=files)
+    #
+    #
+    # class TableForm(FlaskForm):
+    #     string_of_tables = ['Capabilities\r\n']
+    #     list_of_tables = string_of_tables[0].split()
+    #     # create a list of value/description tuples
+    #     files = [(x, x) for x in list_of_tables]
+    #     tableResult = MultiCheckboxField('Label', choices=files)
 
-# class ExersiceFrom(FlaskForm):
-#     string_of_exersices = ['CWIX_2021\r\nCWIX_2022\r\n']
-#     list_of_exersices = string_of_exersices[0].split()
-#     # create a list of value/description tuples
-#     files = [(x, x) for x in list_of_exersices]
-#     exersiceResult = MultiCheckboxField('Label', choices=files)
-#
-#
-# class TaskFrom(FlaskForm):
-#     string_of_tasks = ['Data_Centric_Security_Approach\r\nConformance_Testing\r\nDe-Risking_Coalition_Operations\r\n'
-#                        'Data_Analytics\r\nConnecting_sensor_-_decision_maker_effector\r\n'
-#                        'Federated_Mission_Networking\r\nMulti-Domain_Operations\r\nStandards_Violation\r\n']
-#     list_of_tasks = string_of_tasks[0].split()
-#     # create a list of value/description tuples
-#     files = [(x, x) for x in list_of_tasks]
-#     taskResult = MultiCheckboxField('Label', choices=files)
-#
-#
-# class DomainFrom(FlaskForm):
-#     string_of_domains = ['Air\nLand\r\nMaritime\r\nCyberspace\r\nSpace\r\nOther_Support_Services\r\n']
-#     list_of_domains = string_of_domains[0].split()
-#     # create a list of value/description tuples
-#     files = [(x, x) for x in list_of_domains]
-#     domainResult = MultiCheckboxField('Label', choices=files)
-#
-#
-# class WarfareFrom(FlaskForm):
-#     string_of_warfare = ['Strategic\nOperational\r\nDeployed\r\n']
-#     list_of_warfare = string_of_warfare[0].split()
-#     # create a list of value/description tuples
-#     files = [(x, x) for x in list_of_warfare]
-#     warfareResult = MultiCheckboxField('Label', choices=files)
-#
-#
-# class TableForm(FlaskForm):
-#     string_of_tables = ['Capabilities\r\n']
-#     list_of_tables = string_of_tables[0].split()
-#     # create a list of value/description tuples
-#     files = [(x, x) for x in list_of_tables]
-#     tableResult = MultiCheckboxField('Label', choices=files)
 
-
-@app.route('/', methods=['post', 'get'])
-def multi_Domain_Operations_By_Nation():
-    # Initiate Program
-    # Nation Mapping Dictionary
+def change_Nation_Mapping(nation_list):
     nation_mapping = {
         'Nation_1': 1,
         'Nation_2': 2,
@@ -144,6 +140,33 @@ def multi_Domain_Operations_By_Nation():
         'Nation_69': 69,
         'Nation_70': 70,
     }
+    nation_list = ''.join(nation_list)
+    return str(nation_mapping[nation_list])
+
+
+def nation_form_validation(form_type, form_result, html_page_received, query):
+    if form_type.validate_on_submit():
+        print(form_result)
+        selected_nation = form_result
+        selected_nation = change_Nation_Mapping(selected_nation)
+        complete_query = query + selected_nation
+
+        return render_template("by_nation_result.html",
+                               nationData=form_result, completeQuery=complete_query)
+    else:
+        print("Validation Failed")
+        print("Form Errors ", form_type.errors)
+
+    return render_template(html_page_received, nationForm=form_type)
+
+
+@app.route('/', methods=['post', 'get'])
+def init_state():
+    return render_template('index.html')
+
+
+@app.route('/multi_Domain_Operations_By_Nation_search.html', methods=['post', 'get'])
+def multi_Domain_Operations_By_Nation():
     # Generate Form
     nation_form = NationForm()
     # Initial Query
@@ -155,20 +178,90 @@ def multi_Domain_Operations_By_Nation():
     if nation_form.validate_on_submit():
         print(nation_form.nationResult.data)
         selected_nation = nation_form.nationResult.data
-        str_selected_nation = ''.join(selected_nation)
-        print(str_selected_nation)
-        complete_query = query + str(nation_mapping[str_selected_nation]) + query2 + str(nation_mapping[str_selected_nation])
+        selected_nation = change_Nation_Mapping(selected_nation)
+        complete_query = query + selected_nation + query2 + selected_nation
 
-        return render_template("multi_Domain_Operations_By_Nation_result.html", nationData=nation_form.nationResult.data, completeQuery=complete_query)
+        return render_template("by_nation_result.html",
+                               nationData=nation_form.nationResult.data, completeQuery=complete_query)
     else:
         print("Validation Failed")
         print("Nation Form Errors ", nation_form.errors)
 
     return render_template('multi_Domain_Operations_By_Nation_search.html', nationForm=nation_form)
 
+
+@app.route('/ineroperability_issues_by_nation_search.html', methods=['post', 'get'])
+def interoperability_issue_by_nation():
+    # Generate Form
+    nation_form = NationForm()
+    # Initial Query
+    query = "select n.name as Nation_Name, t.tc_number as testcase_number, t.exercise_cycle, t.overall_result from" \
+            " testcases t inner join test_participants tp on t.id = tp.testcase_id inner join capabilities c on c.id =" \
+            " tp.capability_id  inner join nations n on n.id = c.nation_id where t.overall_result" \
+            " = 'Interoperability Issue' and n.id = "
+    # Form Validation and automatic generation of user query
+    return nation_form_validation(nation_form, nation_form.nationResult.data,
+                                  'ineroperability_issues_by_nation_search.html', query)
+
+
+@app.route('/multi_lateral_interoperability_program_by_nation_search.html', methods=['post', 'get'])
+def multi_lateral_interoperablility_program_by_nation():
+    # Generate Form
+    nation_form = NationForm()
+    # Initial Query
+    query = "select n.name as Nation_Name, fa.name as focus_area_name, o.name as objective_name, t.exercise_cycle " \
+            "from focus_areas fa inner join objectives o on o.focus_area_id = fa.id inner join test_objectives to2" \
+            " on to2.objective_id  = o.id inner join testcases t on t.id = to2.testcase_id inner join" \
+            " test_participants tp on tp.testcase_id  = t.id inner join capabilities c on c.id = tp.capability_id" \
+            " inner join nations n on n.id = c.nation_id where fa.name = 'Multilateral Interoperability Programme'" \
+            " and n.id = "
+    # Form Validation and automatic generation of user query
+    return nation_form_validation(nation_form, nation_form.nationResult.data,
+                                  'multi_lateral_interoperability_program_by_nation_search.html', query)
+
+
+@app.route('/cross_domain_solution_by_nation_search.html', methods=['post', 'get'])
+def cross_domain_solution_by_nation():
+    # Generate Form
+    nation_form = NationForm()
+    # Initial Query
+    query = "select n.name AS NATION_NAME, t.name as task_type, c.name AS CAPABILITY_NAME  from tasks t inner join" \
+            " capability_tasks ct on t.id = ct.task_id inner join capabilities c on c.id = ct.capability_id inner" \
+            " join nations n on n.id = c.nation_id where t.name = 'Cross-Domain Solutions' and n.id = "
+    # Form Validation and automatic generation of user query
+    return nation_form_validation(nation_form, nation_form.nationResult.data,
+                                  'cross_domain_solution_by_nation_search.html', query)
+
+
+@app.route('/multi_domain_solution_by_nation_search.html', methods=['post', 'get'])
+def multi_domain_solution_by_nation():
+    # Generate Form
+    nation_form = NationForm()
+    # Initial Query
+    query = "select n.name AS NATION_NAME, t.name as task_type, c.name AS CAPABILITY_NAME  from tasks t inner join" \
+            " capability_tasks ct on t.id = ct.task_id inner join capabilities c on c.id = ct.capability_id inner" \
+            " join nations n on n.id = c.nation_id where t.name = 'Multi-Domain Operations' and n.id = "
+    # Form Validation and automatic generation of user query
+    return nation_form_validation(nation_form, nation_form.nationResult.data,
+                                  'multi_domain_solution_by_nation_search.html', query)
+
+
+@app.route('/cross_dom_solution_&_multi_dom_ops_by_nation_search.html', methods=['post', 'get'])
+def multi_domain_solution_and_cross_dom_sol_by_nation():
+    # Generate Form
+    nation_form = NationForm()
+    # Initial Query
+    query = "select n.name AS NATION_NAME, t.name as task_type, c.name AS CAPABILITY_NAME  from tasks t inner join " \
+            "capability_tasks ct on t.id = ct.task_id inner join capabilities c on c.id = ct.capability_id inner " \
+            "join nations n on n.id = c.nation_id where (t.name = 'Multi-Domain Operations' or t.name = " \
+            "'Cross-Domain Solutions') and n.id = "
+    # Form Validation and automatic generation of user query
+    return nation_form_validation(nation_form, nation_form.nationResult.data,
+                                  'cross_dom_solution_&_multi_dom_ops_by_nation_search.html', query)
+
+
 # @app.route('/', methods=['post', 'get'])
 # def hello_world():
-#     # Initiate Program
 #     nation_form = NationForm()
 #     exersice_form = ExersiceFrom()
 #     task_form = TaskFrom()
