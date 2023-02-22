@@ -1,7 +1,7 @@
 import json
 import requests
 
-def panel_input_sql_output_table(sql_input):
+def generate_table_panel_dict(sql_input):
     panel_dict = {
         'datasource': {'type': 'postgres', 'uid': 'P44368ADAD746BC27'}, 
         'fieldConfig': {
@@ -34,9 +34,9 @@ def panel_input_sql_output_table(sql_input):
     
     return panel_dict
 
-def add_panel_to_dashboard(sql_input, dashboard_dict):
+def add_table_panel_to_dashboard(sql_input, dashboard_dict):
     dashboard_dict['dashboard']['panels'].append(
-        panel_input_sql_output_table(sql_input)
+        generate_table_panel_dict(sql_input)
     )
 
     new_dashboard = dashboard_dict
@@ -85,6 +85,20 @@ def update_dashboard_on_grafana(username, password, ip_addr, port, dashboard_dic
 
     print(response)
 
+def create_panel_on_grafana(username, password, ip_addr, port, dashboard_uid, sql_text):
+    # Get dashboard json and load into dictionary
+    dashboard = get_dashboard(username, password, ip_addr, port, dashboard_uid)
+
+    # Add new panel to dashboard
+    dashboard = add_table_panel_to_dashboard(
+        sql_text,
+        dashboard
+        )
+
+    # Create new panel in the dashboard
+    update_dashboard_on_grafana(username, password, ip_addr, port, dashboard)
+
+
 
 if __name__ == "__main__":
     dashboard_uid = '1MB0c91Vz'
@@ -99,11 +113,13 @@ if __name__ == "__main__":
     dashboard = get_dashboard(username, password, ip_addr, port, dashboard_uid)
 
     # Add new panel to dashboard
-    dashboard = add_panel_to_dashboard(
+    dashboard = add_table_panel_to_dashboard(
         'SELECT * FROM capability_tasks',
         dashboard
         )
 
     # Create new panel in the dashboard
     update_dashboard_on_grafana(username, password, ip_addr, port, dashboard)
-    
+
+    # Try the wrapper function
+    create_panel_on_grafana(username, password, ip_addr, port, dashboard_uid, 'SELECT * FROM nations n')

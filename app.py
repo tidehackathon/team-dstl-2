@@ -137,13 +137,8 @@ def nation_form_validation(form_type, form_result, html_page_received, query):
         selected_nation = change_Nation_Mapping(selected_nation)
         complete_query = query + selected_nation
 
-        # Create panel in dashboard
-        dashboard = gfapi.get_dashboard(gf_username, gf_password, gf_ip_addr, gf_port, gf_dashboard_uid)
-        # Add new panel to dashboard
-        dashboard = gfapi.add_panel_to_dashboard(complete_query,dashboard)
-
-        # Create new panel in the dashboard
-        gfapi.update_dashboard_on_grafana(gf_username, gf_password, gf_ip_addr, gf_port, dashboard)
+        # Create new panel in the grafana dashboard
+        gfapi.create_panel_on_grafana(gf_username, gf_password, gf_ip_addr, gf_port, gf_dashboard_uid, complete_query)
 
         return render_template("by_nation_result.html",
                                nationData=form_result, completeQuery=complete_query)
