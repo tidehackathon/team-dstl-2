@@ -1,6 +1,5 @@
 import json
 import requests
-import pprint
 
 def panel_input_sql_output_table(sql_input):
     panel_dict = {

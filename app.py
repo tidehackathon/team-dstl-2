@@ -1,10 +1,20 @@
 from flask import Flask, render_template
 from flask_wtf import FlaskForm
 from wtforms import widgets, SelectMultipleField
+import grafana.dashboard_editor_via_api as gfapi
 
 SECRET_KEY = 'development'
 app = Flask(__name__)
 app.config.from_object(__name__)
+
+# Grafana configs
+gf_dashboard_uid = '1MB0c91Vz'
+
+# Grafana host details
+gf_username = 'admin'
+gf_password = 'qwerty'
+gf_ip_addr = 'grafana' # with docker compose, the ip_addr is just the name of the service
+gf_port = '3000'
 
 
 class MultiCheckboxField(SelectMultipleField):
@@ -151,6 +161,14 @@ def nation_form_validation(form_type, form_result, html_page_received, query):
         selected_nation = change_Nation_Mapping(selected_nation)
         complete_query = query + selected_nation
 
+        # Create panel in dashboard
+        dashboard = gfapi.get_dashboard(gf_username, gf_password, gf_ip_addr, gf_port, gf_dashboard_uid)
+        # Add new panel to dashboard
+        dashboard = gfapi.add_panel_to_dashboard(complete_query,dashboard)
+
+        # Create new panel in the dashboard
+        gfapi.update_dashboard_on_grafana(gf_username, gf_password, gf_ip_addr, gf_port, dashboard)
+
         return render_template("by_nation_result.html",
                                nationData=form_result, completeQuery=complete_query)
     else:
@@ -180,6 +198,10 @@ def multi_Domain_Operations_By_Nation():
         selected_nation = nation_form.nationResult.data
         selected_nation = change_Nation_Mapping(selected_nation)
         complete_query = query + selected_nation + query2 + selected_nation
+
+        print(complete_query)
+
+
 
         return render_template("by_nation_result.html",
                                nationData=nation_form.nationResult.data, completeQuery=complete_query)
