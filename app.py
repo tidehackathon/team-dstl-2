@@ -37,55 +37,6 @@ class CapabilityForm(FlaskForm):
     capabilityResult = MultiCheckboxField('Label', choices=files)
 
 
-class BlankForm(FlaskForm):
-    string_of_capabilities = ['']
-    list_of_capabilities = string_of_capabilities[0].split()
-    # create a list of value/description tuples
-    files = [(x, x) for x in list_of_capabilities]
-    capabilityResult = MultiCheckboxField('Label', choices=files)
-
-
-# class ExersiceFrom(FlaskForm):
-#     string_of_exersices = ['CWIX_2021\r\nCWIX_2022\r\n']
-#     list_of_exersices = string_of_exersices[0].split()
-#     # create a list of value/description tuples
-#     files = [(x, x) for x in list_of_exersices]
-#     exersiceResult = MultiCheckboxField('Label', choices=files)
-#
-#
-# class TaskFrom(FlaskForm):
-#     string_of_tasks = ['Data_Centric_Security_Approach\r\nConformance_Testing\r\nDe-Risking_Coalition_Operations\r\n'
-#                        'Data_Analytics\r\nConnecting_sensor_-_decision_maker_effector\r\n'
-#                        'Federated_Mission_Networking\r\nMulti-Domain_Operations\r\nStandards_Violation\r\n']
-#     list_of_tasks = string_of_tasks[0].split()
-#     # create a list of value/description tuples
-#     files = [(x, x) for x in list_of_tasks]
-#     taskResult = MultiCheckboxField('Label', choices=files)
-#
-#
-# class DomainFrom(FlaskForm):
-#     string_of_domains = ['Air\nLand\r\nMaritime\r\nCyberspace\r\nSpace\r\nOther_Support_Services\r\n']
-#     list_of_domains = string_of_domains[0].split()
-#     # create a list of value/description tuples
-#     files = [(x, x) for x in list_of_domains]
-#     domainResult = MultiCheckboxField('Label', choices=files)
-#
-#
-# class WarfareFrom(FlaskForm):
-#     string_of_warfare = ['Strategic\nOperational\r\nDeployed\r\n']
-#     list_of_warfare = string_of_warfare[0].split()
-#     # create a list of value/description tuples
-#     files = [(x, x) for x in list_of_warfare]
-#     warfareResult = MultiCheckboxField('Label', choices=files)
-#
-#
-# class TableForm(FlaskForm):
-#     string_of_tables = ['Capabilities\r\n']
-#     list_of_tables = string_of_tables[0].split()
-#     # create a list of value/description tuples
-#     files = [(x, x) for x in list_of_tables]
-#     tableResult = MultiCheckboxField('Label', choices=files)
-
 def underscore_replacer(capability):
     capability = ''.join(capability)
     print(capability)
