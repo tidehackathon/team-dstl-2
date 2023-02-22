@@ -15,7 +15,7 @@ GF_DASHBOARD_UID = '1MB0c91Vz'
 # Grafana host details
 GF_USERNAME = 'admin'
 GF_PASSWORD = 'qwerty'
-GF_IP_ADDR = 'grafana' # with docker compose, the ip_addr is just the name of the service
+GF_IP_ADDR = 'grafana'  # with docker compose, the ip_addr is just the name of the service
 GF_PORT = '3000'
 
 
@@ -175,8 +175,6 @@ def multi_Domain_Operations_By_Nation():
         gfapi.create_panel_on_grafana(GF_USERNAME, GF_PASSWORD, GF_IP_ADDR, GF_PORT, GF_DASHBOARD_UID, complete_query)
 
         print(complete_query)
-
-
 
         return render_template("by_nation_result.html",
                                nationData=nation_form.nationResult.data, completeQuery=complete_query)
@@ -392,7 +390,8 @@ def measure_two_cap_between_two_nations():
         print("Capability 2 From Errors ", capability2_form.errors)
 
         return render_template('measure_two_capabilities_between_two_nations.html', nation1Form=nation1_form,
-                               nation2Form=nation2_form, capabilityForm=capability_form, capability2Form=capability2_form)
+                               nation2Form=nation2_form, capabilityForm=capability_form,
+                               capability2Form=capability2_form)
 
 
 if __name__ == '__main__':
