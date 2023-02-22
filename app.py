@@ -144,6 +144,22 @@ def change_Nation_Mapping(nation_list):
     return str(nation_mapping[nation_list])
 
 
+def nation_form_validation(form_type, form_result, html_page_received, query):
+    if form_type.validate_on_submit():
+        print(form_result)
+        selected_nation = form_result
+        selected_nation = change_Nation_Mapping(selected_nation)
+        complete_query = query + selected_nation
+
+        return render_template("by_nation_result.html",
+                               nationData=form_result, completeQuery=complete_query)
+    else:
+        print("Validation Failed")
+        print("Form Errors ", form_type.errors)
+
+    return render_template(html_page_received, nationForm=form_type)
+
+
 @app.route('/', methods=['post', 'get'])
 def init_state():
     return render_template('index.html')
@@ -184,19 +200,8 @@ def interoperability_issue_by_nation():
             " tp.capability_id  inner join nations n on n.id = c.nation_id where t.overall_result" \
             " = 'Interoperability Issue' and n.id = "
     # Form Validation and automatic generation of user query
-    if nation_form.validate_on_submit():
-        print(nation_form.nationResult.data)
-        selected_nation = nation_form.nationResult.data
-        selected_nation = change_Nation_Mapping(selected_nation)
-        complete_query = query + selected_nation
-
-        return render_template("by_nation_result.html",
-                               nationData=nation_form.nationResult.data, completeQuery=complete_query)
-    else:
-        print("Validation Failed")
-        print("Nation Form Errors ", nation_form.errors)
-
-    return render_template('ineroperability_issues_by_nation_search.html', nationForm=nation_form)
+    return nation_form_validation(nation_form, nation_form.nationResult.data,
+                                  'ineroperability_issues_by_nation_search.html', query)
 
 
 @app.route('/multi_lateral_interoperability_program_by_nation_search.html', methods=['post', 'get'])
@@ -211,19 +216,8 @@ def multi_lateral_interoperablility_program_by_nation():
             " inner join nations n on n.id = c.nation_id where fa.name = 'Multilateral Interoperability Programme'" \
             " and n.id = "
     # Form Validation and automatic generation of user query
-    if nation_form.validate_on_submit():
-        print(nation_form.nationResult.data)
-        selected_nation = nation_form.nationResult.data
-        selected_nation = change_Nation_Mapping(selected_nation)
-        complete_query = query + selected_nation
-
-        return render_template("by_nation_result.html.html",
-                               nationData=nation_form.nationResult.data, completeQuery=complete_query)
-    else:
-        print("Validation Failed")
-        print("Nation Form Errors ", nation_form.errors)
-
-    return render_template('multi_lateral_interoperability_program_by_nation_search.html', nationForm=nation_form)
+    return nation_form_validation(nation_form, nation_form.nationResult.data,
+                                  'multi_lateral_interoperability_program_by_nation_search.html', query)
 
 
 @app.route('/cross_domain_solution_by_nation_search.html', methods=['post', 'get'])
@@ -235,19 +229,8 @@ def cross_domain_solution_by_nation():
             " capability_tasks ct on t.id = ct.task_id inner join capabilities c on c.id = ct.capability_id inner" \
             " join nations n on n.id = c.nation_id where t.name = 'Cross-Domain Solutions' and n.id = "
     # Form Validation and automatic generation of user query
-    if nation_form.validate_on_submit():
-        print(nation_form.nationResult.data)
-        selected_nation = nation_form.nationResult.data
-        selected_nation = change_Nation_Mapping(selected_nation)
-        complete_query = query + selected_nation
-
-        return render_template("by_nation_result.html",
-                               nationData=nation_form.nationResult.data, completeQuery=complete_query)
-    else:
-        print("Validation Failed")
-        print("Nation Form Errors ", nation_form.errors)
-
-    return render_template('cross_domain_solution_by_nation_search.html', nationForm=nation_form)
+    return nation_form_validation(nation_form, nation_form.nationResult.data,
+                                  'cross_domain_solution_by_nation_search.html', query)
 
 
 @app.route('/multi_domain_solution_by_nation_search.html', methods=['post', 'get'])
@@ -259,19 +242,8 @@ def multi_domain_solution_by_nation():
             " capability_tasks ct on t.id = ct.task_id inner join capabilities c on c.id = ct.capability_id inner" \
             " join nations n on n.id = c.nation_id where t.name = 'Multi-Domain Operations' and n.id = "
     # Form Validation and automatic generation of user query
-    if nation_form.validate_on_submit():
-        print(nation_form.nationResult.data)
-        selected_nation = nation_form.nationResult.data
-        selected_nation = change_Nation_Mapping(selected_nation)
-        complete_query = query + selected_nation
-
-        return render_template("by_nation_result.html",
-                               nationData=nation_form.nationResult.data, completeQuery=complete_query)
-    else:
-        print("Validation Failed")
-        print("Nation Form Errors ", nation_form.errors)
-
-    return render_template('multi_domain_solution_by_nation_search.html', nationForm=nation_form)
+    return nation_form_validation(nation_form, nation_form.nationResult.data,
+                                  'multi_domain_solution_by_nation_search.html', query)
 
 
 @app.route('/cross_dom_solution_&_multi_dom_ops_by_nation_search.html', methods=['post', 'get'])
@@ -284,19 +256,9 @@ def multi_domain_solution_and_cross_dom_sol_by_nation():
             "join nations n on n.id = c.nation_id where (t.name = 'Multi-Domain Operations' or t.name = " \
             "'Cross-Domain Solutions') and n.id = "
     # Form Validation and automatic generation of user query
-    if nation_form.validate_on_submit():
-        print(nation_form.nationResult.data)
-        selected_nation = nation_form.nationResult.data
-        selected_nation = change_Nation_Mapping(selected_nation)
-        complete_query = query + selected_nation
+    return nation_form_validation(nation_form, nation_form.nationResult.data,
+                                  'cross_dom_solution_&_multi_dom_ops_by_nation_search.html', query)
 
-        return render_template("multi_Domain_Operations_By_Nation_result.html",
-                               nationData=nation_form.nationResult.data, completeQuery=complete_query)
-    else:
-        print("Validation Failed")
-        print("Nation Form Errors ", nation_form.errors)
-
-    return render_template('cross_dom_solution_&_multi_dom_ops_by_nation_search.html', nationForm=nation_form)
 
 # @app.route('/', methods=['post', 'get'])
 # def hello_world():
