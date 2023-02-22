@@ -105,3 +105,4 @@ if __name__ == "__main__":
 
     # Create new panel in the dashboard
     update_dashboard_on_grafana(username, password, ip_addr, port, dashboard)
+    
