@@ -13,7 +13,7 @@
         Nation 2 Form Errors: {{ nation2Form.errors }}
     </p>
     <p>
-        Capability 1 Form Errors: {{ capability1Form.errors }}
+        Capability 1 Form Errors: {{ capabilityForm.errors }}
     </p>
     <p>
         Capability 2 Form Errors: {{ capability2Form.errors }}
@@ -29,8 +29,8 @@
             <tr>
                 <td>{{ nation1Form.hidden_tag() }} {{ nation1Form.nationResult }}</td>
                 <td>{{ nation2Form.hidden_tag() }} {{ nation2Form.nationResult }}</td>
-                <td>{{ capability1From.hidden_tag() }} {{ capability1Form.capabilityResult }}</td>
-                <td>{{ capability2From.hidden_tag() }} {{ capability2Form.capabilityResult }}</td>
+                <td>{{ capabilityForm.hidden_tag() }} {{ capabilityForm.capabilityResult }}</td>
+                <td>{{ capability2Form.hidden_tag() }} {{ capability2Form.capabilityResult }}</td>
             </tr>
         </table>
         <p><button type="submit">Submit</button></p>
