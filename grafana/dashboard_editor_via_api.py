@@ -2,7 +2,7 @@ import json
 import requests
 import pprint
 
-def panel_input_sql_output_table():
+def panel_input_sql_output_table(sql_input):
     panel_dict = {
         'datasource': {'type': 'postgres', 'uid': 'P44368ADAD746BC27'}, 
         'fieldConfig': {
@@ -13,7 +13,7 @@ def panel_input_sql_output_table():
                 }, 
             'overrides': []
         }, 
-        'gridPos': {'h': 8, 'w': 12, 'x': 12, 'y': 0}, 
+        'gridPos': {'h': 8, 'w': 12, 'x': 0, 'y': 0}, 
         'id': 4, 
         'options': {'footer': {'fields': '', 'reducer': ['sum'], 'show': False}, 'showHeader': True}, 
         'pluginVersion': '9.3.6', 
@@ -23,7 +23,7 @@ def panel_input_sql_output_table():
                 'editorMode': 'code', 
                 'format': 'table', 
                 'rawQuery': True, 
-                'rawSql': 'SELECT * FROM operational_domains ', 
+                'rawSql': sql_input, 
                 'refId': 'A', 
                 'sql': {'columns': [{'parameters': [], 'type': 'function'}], 
                         'groupBy': [{'property': {'type': 'string'}, 'type': 'groupBy'}], 'limit': 50}
@@ -35,34 +35,73 @@ def panel_input_sql_output_table():
     
     return panel_dict
 
-dashboard_uid = '1MB0c91Vz'
-grafana_url = 'http://admin:qwerty@localhost:3000'.rstrip()
-
-dashboard_update_endpoint = '/api/dashboards/db'
-dashboard_get_json = '/api/dashboards/uid/'
-
-# Get dashboard json and load into dictionary.
-
-headers = {
-    'Content-Type': 'application/json',
-}
-
-print(grafana_url + dashboard_get_json + dashboard_uid)
-response = requests.get(
-    grafana_url + dashboard_get_json + dashboard_uid
+def add_panel_to_dashboard(sql_input, dashboard_dict):
+    dashboard_dict['dashboard']['panels'].append(
+        panel_input_sql_output_table(sql_input)
     )
 
-print(response)
+    new_dashboard = dashboard_dict
+    print("Number of panels : ", len(new_dashboard['dashboard']['panels']))
 
-response_json = json.loads(response.text)
+    return new_dashboard
 
-pp = pprint.PrettyPrinter(indent=2)
-pp.pprint(response_json)
+def get_dashboard(username, password, ip_addr, port, dashboard_uid):
+    grafana_url = 'http://{username}:{password}@{ip_addr}:{port}'.format(
+        username = username,
+        password = password,
+        ip_addr = ip_addr,
+        port = port
+    )
 
-print(response_json)
+    dashboard_get_json_endpoint = '/api/dashboards/uid/'
 
-panel1 = response_json['dashboard']['panels'][1]
+    request_target = grafana_url + dashboard_get_json_endpoint + dashboard_uid
+    response = requests.get(request_target)
+    print(response)
 
-print(panel1)
+    response_json = json.loads(response.text)
+    print(response_json)
 
-panel_template = panel1
+    return response_json
+
+def update_dashboard_on_grafana(username, password, ip_addr, port, dashboard_dict):
+    grafana_url = 'http://{username}:{password}@{ip_addr}:{port}'.format(
+        username = username,
+        password = password,
+        ip_addr = ip_addr,
+        port = port
+    )
+    
+    headers = {
+        'Content-Type': 'application/json',
+    }
+
+    dashboard_update_endpoint = '/api/dashboards/db'
+
+    response = requests.post(
+        grafana_url + dashboard_update_endpoint,
+        headers=headers,
+        data=json.dumps(dashboard_dict)
+    )
+
+    print(response)
+
+
+if __name__ == "__main__":
+    dashboard_uid = '1MB0c91Vz'
+    username = 'admin'
+    password = 'qwerty'
+    ip_addr = 'localhost'
+    port = '3000'
+
+    # Get dashboard json and load into dictionary
+    dashboard = get_dashboard(username, password, ip_addr, port, dashboard_uid)
+
+    # Add new panel to dashboard
+    dashboard = add_panel_to_dashboard(
+        'SELECT * FROM capability_tasks',
+        dashboard
+        )
+
+    # Create new panel in the dashboard
+    update_dashboard_on_grafana(username, password, ip_addr, port, dashboard)
