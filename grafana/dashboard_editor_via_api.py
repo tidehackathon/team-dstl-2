@@ -1,7 +1,7 @@
 import json
 import requests
 
-def generate_table_panel_dict(sql_input):
+def generate_table_panel_dict(sql_input, id):
     panel_dict = {
         'datasource': {'type': 'postgres', 'uid': 'P44368ADAD746BC27'}, 
         'fieldConfig': {
@@ -13,7 +13,7 @@ def generate_table_panel_dict(sql_input):
             'overrides': []
         }, 
         'gridPos': {'h': 8, 'w': 12, 'x': 0, 'y': 0}, 
-        'id': 4, 
+        'id': id, 
         'options': {'footer': {'fields': '', 'reducer': ['sum'], 'show': False}, 'showHeader': True}, 
         'pluginVersion': '9.3.6', 
         'targets': [
@@ -35,8 +35,15 @@ def generate_table_panel_dict(sql_input):
     return panel_dict
 
 def add_table_panel_to_dashboard(sql_input, dashboard_dict):
+    # Find max panel id amongst existing panels
+    list_of_ids = list()
+    for panel in dashboard_dict['dashboard']['panels']:
+        list_of_ids.append(panel['id'])
+    max_id = max(list_of_ids)
+    print("max id : ", max_id)
+
     dashboard_dict['dashboard']['panels'].append(
-        generate_table_panel_dict(sql_input)
+        generate_table_panel_dict(sql_input, max_id + 1)
     )
 
     new_dashboard = dashboard_dict
