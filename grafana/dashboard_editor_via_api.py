@@ -1,6 +1,5 @@
 import json
 import requests
-import pprint
 
 def panel_input_sql_output_table(sql_input):
     panel_dict = {
@@ -89,9 +88,11 @@ def update_dashboard_on_grafana(username, password, ip_addr, port, dashboard_dic
 
 if __name__ == "__main__":
     dashboard_uid = '1MB0c91Vz'
+
+    # Grafana host details
     username = 'admin'
     password = 'qwerty'
-    ip_addr = 'localhost'
+    ip_addr = 'grafana' # with docker compose, the ip_addr is just the name of the service
     port = '3000'
 
     # Get dashboard json and load into dictionary
