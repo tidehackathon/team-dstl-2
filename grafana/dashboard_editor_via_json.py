@@ -15,8 +15,6 @@ pp = pprint.PrettyPrinter(indent=2)
 pp.pprint(dashboard_dict["panels"][1])
 
 # Test adding a new panel
-
 new_panel_dict = {'test': 'test'}
-
 
 f.close()
