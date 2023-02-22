@@ -1,0 +1,30 @@
+$ curl http://admin:qwerty@localhost:3000/api/search
+
+$ curl -X POST http://admin:qwerty@localhost:3000/api/dashboards/db -H 'Content-Type: application/json' -d '{"login":"my_login","password":"my_password"}'
+
+$ curl -X POST http://admin:qwerty@localhost:3000/api/dashboards/db -H 'Content-Type: application/json' -d '
+{
+  "dashboard": {
+    "id": null,
+    "uid": null,
+    "title": "Production Overview",
+    "tags": [ "templated" ],
+    "timezone": "browser",
+    "schemaVersion": 16,
+    "version": 0,
+    "refresh": "25s"
+  },
+  "folderId": 0,
+  "folderUid": "l3KqBxCMz",
+  "message": "Made changes to xyz",
+  "overwrite": false
+}
+'
+
+
+# Create dashboard
+$ curl -X POST http://admin:qwerty@localhost:3000/api/dashboards/db -H 'Content-Type: application/json' -d '{"dashboard":{"id":null,"uid":null,"title":"Production Overview","tags":["templated"],"timezone":"browser","schemaVersion": 16,"version": 0,"refresh": "25s"},"message":"Made changes to xyz","overwrite":false}'
+
+# Get dashboard json
+$ curl http://admin:qwerty@localhost:3000/api/dashboards/uid/1MB0c91Vz
+

@@ -1,3 +1,0 @@
-SELECT maturity, COUNT(*) 
-FROM capabilities 
-GROUP BY maturity;
