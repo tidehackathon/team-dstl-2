@@ -35,46 +35,22 @@ class NationForm(FlaskForm):
     files = [(x, x) for x in list_of_nations]
     nationResult = MultiCheckboxField('Label', choices=files)
 
-    # class ExersiceFrom(FlaskForm):
-    #     string_of_exersices = ['CWIX_2021\r\nCWIX_2022\r\n']
-    #     list_of_exersices = string_of_exersices[0].split()
-    #     # create a list of value/description tuples
-    #     files = [(x, x) for x in list_of_exersices]
-    #     exersiceResult = MultiCheckboxField('Label', choices=files)
-    #
-    #
-    # class TaskFrom(FlaskForm):
-    #     string_of_tasks = ['Data_Centric_Security_Approach\r\nConformance_Testing\r\nDe-Risking_Coalition_Operations\r\n'
-    #                        'Data_Analytics\r\nConnecting_sensor_-_decision_maker_effector\r\n'
-    #                        'Federated_Mission_Networking\r\nMulti-Domain_Operations\r\nStandards_Violation\r\n']
-    #     list_of_tasks = string_of_tasks[0].split()
-    #     # create a list of value/description tuples
-    #     files = [(x, x) for x in list_of_tasks]
-    #     taskResult = MultiCheckboxField('Label', choices=files)
-    #
-    #
-    # class DomainFrom(FlaskForm):
-    #     string_of_domains = ['Air\nLand\r\nMaritime\r\nCyberspace\r\nSpace\r\nOther_Support_Services\r\n']
-    #     list_of_domains = string_of_domains[0].split()
-    #     # create a list of value/description tuples
-    #     files = [(x, x) for x in list_of_domains]
-    #     domainResult = MultiCheckboxField('Label', choices=files)
-    #
-    #
-    # class WarfareFrom(FlaskForm):
-    #     string_of_warfare = ['Strategic\nOperational\r\nDeployed\r\n']
-    #     list_of_warfare = string_of_warfare[0].split()
-    #     # create a list of value/description tuples
-    #     files = [(x, x) for x in list_of_warfare]
-    #     warfareResult = MultiCheckboxField('Label', choices=files)
-    #
-    #
-    # class TableForm(FlaskForm):
-    #     string_of_tables = ['Capabilities\r\n']
-    #     list_of_tables = string_of_tables[0].split()
-    #     # create a list of value/description tuples
-    #     files = [(x, x) for x in list_of_tables]
-    #     tableResult = MultiCheckboxField('Label', choices=files)
+
+class CapabilityForm(FlaskForm):
+    string_of_capabilities = ['Data_Centric_Security_Approach\r\nConformance_Testing\r\n'
+                              'De-risking_Coalition_Operations\r\nCross-Domain_Solutions\r\nData_and_Analytics\r\n'
+                              'Connecting_sensor_-_decision_maker_-_effector\r\nFederated_Mission_Networking\r\n'
+                              'Multi-Domain_Operations\r\nStandards_Validation\r\n']
+    list_of_capabilities = string_of_capabilities[0].split()
+    # create a list of value/description tuples
+    files = [(x, x) for x in list_of_capabilities]
+    capabilityResult = MultiCheckboxField('Label', choices=files)
+
+
+def underscore_replacer(capability):
+    capability = ''.join(capability)
+    print(capability)
+    return capability.replace('_', ' ')
 
 
 def change_Nation_Mapping(nation_list):
@@ -282,34 +258,136 @@ def multi_domain_solution_and_cross_dom_sol_by_nation():
                                   'cross_dom_solution_&_multi_dom_ops_by_nation_search.html', query)
 
 
-# @app.route('/', methods=['post', 'get'])
-# def hello_world():
-#     nation_form = NationForm()
-#     exersice_form = ExersiceFrom()
-#     task_form = TaskFrom()
-#     domain_form = DomainFrom()
-#     warfare_form = WarfareFrom()
-#
-#     # Form Validation
-#     if nation_form.validate_on_submit() & exersice_form.validate_on_submit() & task_form.validate_on_submit() & \
-#             domain_form.validate_on_submit() & warfare_form.validate_on_submit():
-#         print(nation_form.nationResult.data)
-#         print(exersice_form.exersiceResult.data)
-#         print(task_form.taskResult.data)
-#         print(domain_form.domainResult.data)
-#         print(warfare_form.warfareResult.data)
-#         return render_template("multi_Domain_Operations_By_Nation_result.html", nationData=nation_form.nationResult.data,
-#                                exersiceData=exersice_form.exersiceResult.data, taskData=task_form.taskResult.data,
-#                                domainData=domain_form.domainResult.data, warfareData=warfare_form.warfareResult.data)
-#     else:
-#         print("Validation Failed")
-#         print("Nation Form Errors ", nation_form.errors)
-#         print("Exersice Form Errors ", exersice_form.errors)
-#         print("Task Form Errors ", task_form.errors)
-#         print("Domain Form Errors ", domain_form.errors)
-#         print("Warfare Form Errors ", warfare_form.errors)
-#     return render_template('multi_Domain_Operations_By_Nation_search.html', nationForm=nation_form, exersiceForm=exersice_form, taskForm=task_form,
-#                            domainForm=domain_form, warfareForm=warfare_form)
+@app.route('/compare_two_nations_capabilities.html', methods=['post', 'get'])
+def measure_cap_between_two_nations():
+    # Generate Form
+    nation1_form = NationForm()
+    nation2_form = NationForm()
+    capability_form = CapabilityForm()
+    # Initial Query
+    query = "select new_table.NATION_NAME, count(new_table.CAPABILITY_NAME) from" \
+            " (	" \
+            "select n.name AS NATION_NAME, t.name as task_type, c.name AS CAPABILITY_NAME  from tasks t " \
+            "inner join capability_tasks ct on t.id = ct.task_id " \
+            "inner join capabilities c on c.id = ct.capability_id " \
+            "inner join nations n on n.id = c.nation_id where t.name = '"
+    query2 = "' and n.id = "
+    query3 = " union	" \
+             "select n.name AS NATION_NAME, t.name as task_type, c.name AS CAPABILITY_NAME  from tasks t " \
+             "inner join capability_tasks ct on t.id = ct.task_id " \
+             "inner join capabilities c on c.id = ct.capability_id " \
+             "inner join nations n on n.id = c.nation_id where t.name = '"
+    query4 = "' and n.id = "
+    query5 = " ) as new_table group by new_table.NATION_NAME"
+    # Form Validation and automatic generation of user query
+    if nation1_form.validate_on_submit() and nation2_form.validate_on_submit() and capability_form.validate_on_submit():
+        selected_nation1 = nation1_form.nationResult.data[0]
+        selected_nation2 = nation2_form.nationResult.data[1]
+        selected_capability = capability_form.capabilityResult.data
+        underscore_replacer(selected_capability)
+        selected_nation1 = change_Nation_Mapping(selected_nation1)
+        selected_nation2 = change_Nation_Mapping(selected_nation2)
+        selected_capability = underscore_replacer(selected_capability[0])
+        complete_query = query + selected_capability + query2 + selected_nation1 + query3 + selected_capability + query4 + selected_nation2 + query5
+
+        return render_template("compare_nation_results.html",
+                               nation1Data=selected_nation1, nation2Data=selected_nation2,
+                               capabilityData=selected_capability, completeQuery=complete_query)
+
+    else:
+        print("Validation Failed")
+        print("Nation 1 Form Errors ", nation1_form.errors)
+        print("Nation 2 Form Errors ", nation1_form.errors)
+        print("Capability Form Errors ", capability_form.errors)
+
+        return render_template('compare_two_nations_capabilities.html', nation1Form=nation1_form,
+                               nation2Form=nation2_form, capabilityForm=capability_form)
+
+
+@app.route('/interoperability_issues_between_two_nations.html', methods=['post', 'get'])
+def interops_issue_between_two_nations():
+    # Generate Form
+    nation1_form = NationForm()
+    nation2_form = NationForm()
+    # Initial Query
+    query = "select new_table.NATION_NAME, count(new_table.overall_result) from" \
+            "	( select n.name as Nation_Name, t.tc_number as testcase_number, t.exercise_cycle, t.overall_result from" \
+            " testcases t	inner join test_participants tp on t.id = tp.testcase_id " \
+            "inner join capabilities c on c.id = tp.capability_id " \
+            "inner join nations n on n.id = c.nation_id " \
+            "where t.overall_result = 'Interoperability Issue' and n.id = "
+    query2 = "union select n.name as Nation_Name, t.tc_number as testcase_number, t.exercise_cycle, t.overall_result " \
+             "from testcases t inner join test_participants tp on t.id = tp.testcase_id " \
+             "inner join capabilities c on c.id = tp.capability_id " \
+             "inner join nations n on n.id = c.nation_id where t.overall_result = 'Interoperability Issue' and n.id = "
+    query3 = " ) as new_table group by new_table.NATION_NAME"
+    # Form Validation and automatic generation of user query
+    if nation1_form.validate_on_submit() and nation2_form.validate_on_submit():
+        selected_nation1 = nation1_form.nationResult.data[0]
+        selected_nation2 = nation2_form.nationResult.data[1]
+        selected_nation1 = change_Nation_Mapping(selected_nation1)
+        selected_nation2 = change_Nation_Mapping(selected_nation2)
+        complete_query = query + selected_nation1 + query2 + selected_nation2 + query3
+
+        return render_template("compare_nation_results.html",
+                               nation1Data=selected_nation1, nation2Data=selected_nation2, completeQuery=complete_query)
+
+    else:
+        print("Validation Failed")
+        print("Nation 1 Form Errors ", nation1_form.errors)
+        print("Nation 2 Form Errors ", nation1_form.errors)
+
+        return render_template('interoperability_issues_between_two_nations.html', nation1Form=nation1_form,
+                               nation2Form=nation2_form)
+
+
+@app.route('/measure_two_capabilities_between_two_nations.html', methods=['post', 'get'])
+def measure_two_cap_between_two_nations():
+    # Generate Form
+    nation1_form = NationForm()
+    nation2_form = NationForm()
+    capability_form = CapabilityForm()
+    capability2_form = CapabilityForm()
+    # Initial Query
+    query = "select new_table.NATION_NAME, count(new_table.capability_name) from " \
+            "( select n.name AS NATION_NAME, t.name as task_type, c.name AS CAPABILITY_NAME  " \
+            "from tasks t inner join capability_tasks ct on t.id = ct.task_id " \
+            "inner join capabilities c on c.id = ct.capability_id " \
+            "inner join nations n on n.id = c.nation_id where (t.name = '"
+    query2 = "' or t.name = '"
+    query3 = "') and n.id = "
+    query4 = "6 union select n.name AS NATION_NAME, t.name as task_type, c.name AS CAPABILITY_NAME" \
+             "  from tasks t inner join capability_tasks ct on t.id = ct.task_id " \
+             "inner join capabilities c on c.id = ct.capability_id inner join nations n on n.id = c.nation_id " \
+             "where (t.name = '"
+    query5 = "' or t.name = '"
+    query6 = "') and n.id = "
+    query7 = "as new_table group by new_table.NATION_NAME"
+    # Form Validation and automatic generation of user query
+    if nation1_form.validate_on_submit() and nation2_form.validate_on_submit() and capability_form.validate_on_submit():
+        selected_nation1 = nation1_form.nationResult.data[0]
+        selected_nation2 = nation2_form.nationResult.data[1]
+        selected_capability1 = capability_form.capabilityResult.data[0]
+        selected_capability2 = capability_form.capabilityResult.data[1]
+        selected_capability1 = underscore_replacer(selected_capability1)
+        selected_capability2 = underscore_replacer(selected_capability2)
+        selected_nation1 = change_Nation_Mapping(selected_nation1)
+        selected_nation2 = change_Nation_Mapping(selected_nation2)
+        complete_query = query + selected_capability1 + query2 + selected_capability2 + query3 + selected_nation1 + query4 + selected_capability1 + query5 + selected_capability2 + query6 + selected_nation2 + query7
+
+        return render_template("compare_nation_results.html",
+                               nation1Data=selected_nation1, nation2Data=selected_nation2,
+                               capabilityData=selected_capability1, completeQuery=complete_query)
+
+    else:
+        print("Validation Failed")
+        print("Nation 1 Form Errors ", nation1_form.errors)
+        print("Nation 2 Form Errors ", nation1_form.errors)
+        print("Capability Form Errors ", capability_form.errors)
+        print("Capability 2 From Errors ", capability2_form.errors)
+
+        return render_template('measure_two_capabilities_between_two_nations.html', nation1Form=nation1_form,
+                               nation2Form=nation2_form, capabilityForm=capability_form, capability2Form=capability2_form)
 
 
 if __name__ == '__main__':
