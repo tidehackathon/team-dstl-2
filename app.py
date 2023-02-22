@@ -7,14 +7,16 @@ SECRET_KEY = 'development'
 app = Flask(__name__)
 app.config.from_object(__name__)
 
+# GLOBAL VARIABLES
+
 # Grafana configs
-gf_dashboard_uid = '1MB0c91Vz'
+GF_DASHBOARD_UID = '1MB0c91Vz'
 
 # Grafana host details
-gf_username = 'admin'
-gf_password = 'qwerty'
-gf_ip_addr = 'grafana' # with docker compose, the ip_addr is just the name of the service
-gf_port = '3000'
+GF_USERNAME = 'admin'
+GF_PASSWORD = 'qwerty'
+GF_IP_ADDR = 'grafana'  # with docker compose, the ip_addr is just the name of the service
+GF_PORT = '3000'
 
 
 class MultiCheckboxField(SelectMultipleField):
@@ -137,13 +139,8 @@ def nation_form_validation(form_type, form_result, html_page_received, query):
         selected_nation = change_Nation_Mapping(selected_nation)
         complete_query = query + selected_nation
 
-        # Create panel in dashboard
-        dashboard = gfapi.get_dashboard(gf_username, gf_password, gf_ip_addr, gf_port, gf_dashboard_uid)
-        # Add new panel to dashboard
-        dashboard = gfapi.add_panel_to_dashboard(complete_query,dashboard)
-
-        # Create new panel in the dashboard
-        gfapi.update_dashboard_on_grafana(gf_username, gf_password, gf_ip_addr, gf_port, dashboard)
+        # Create new panel in the grafana dashboard
+        gfapi.create_panel_on_grafana(GF_USERNAME, GF_PASSWORD, GF_IP_ADDR, GF_PORT, GF_DASHBOARD_UID, complete_query)
 
         return render_template("by_nation_result.html",
                                nationData=form_result, completeQuery=complete_query)
@@ -174,10 +171,10 @@ def multi_Domain_Operations_By_Nation():
         selected_nation = nation_form.nationResult.data
         selected_nation = change_Nation_Mapping(selected_nation)
         complete_query = query + selected_nation + query2 + selected_nation
+        # Create new panel in the grafana dashboard
+        gfapi.create_panel_on_grafana(GF_USERNAME, GF_PASSWORD, GF_IP_ADDR, GF_PORT, GF_DASHBOARD_UID, complete_query)
 
         print(complete_query)
-
-
 
         return render_template("by_nation_result.html",
                                nationData=nation_form.nationResult.data, completeQuery=complete_query)
@@ -289,6 +286,8 @@ def measure_cap_between_two_nations():
         selected_nation2 = change_Nation_Mapping(selected_nation2)
         selected_capability = underscore_replacer(selected_capability[0])
         complete_query = query + selected_capability + query2 + selected_nation1 + query3 + selected_capability + query4 + selected_nation2 + query5
+        # Create new panel in the grafana dashboard
+        gfapi.create_panel_on_grafana(GF_USERNAME, GF_PASSWORD, GF_IP_ADDR, GF_PORT, GF_DASHBOARD_UID, complete_query)
 
         return render_template("compare_nation_results.html",
                                nation1Data=selected_nation1, nation2Data=selected_nation2,
@@ -328,6 +327,8 @@ def interops_issue_between_two_nations():
         selected_nation1 = change_Nation_Mapping(selected_nation1)
         selected_nation2 = change_Nation_Mapping(selected_nation2)
         complete_query = query + selected_nation1 + query2 + selected_nation2 + query3
+        # Create new panel in the grafana dashboard
+        gfapi.create_panel_on_grafana(GF_USERNAME, GF_PASSWORD, GF_IP_ADDR, GF_PORT, GF_DASHBOARD_UID, complete_query)
 
         return render_template("compare_nation_results.html",
                                nation1Data=selected_nation1, nation2Data=selected_nation2, completeQuery=complete_query)
@@ -374,6 +375,8 @@ def measure_two_cap_between_two_nations():
         selected_nation1 = change_Nation_Mapping(selected_nation1)
         selected_nation2 = change_Nation_Mapping(selected_nation2)
         complete_query = query + selected_capability1 + query2 + selected_capability2 + query3 + selected_nation1 + query4 + selected_capability1 + query5 + selected_capability2 + query6 + selected_nation2 + query7
+        # Create new panel in the grafana dashboard
+        gfapi.create_panel_on_grafana(GF_USERNAME, GF_PASSWORD, GF_IP_ADDR, GF_PORT, GF_DASHBOARD_UID, complete_query)
 
         return render_template("compare_nation_results.html",
                                nation1Data=selected_nation1, nation2Data=selected_nation2,
@@ -387,7 +390,8 @@ def measure_two_cap_between_two_nations():
         print("Capability 2 From Errors ", capability2_form.errors)
 
         return render_template('measure_two_capabilities_between_two_nations.html', nation1Form=nation1_form,
-                               nation2Form=nation2_form, capabilityForm=capability_form, capability2Form=capability2_form)
+                               nation2Form=nation2_form, capabilityForm=capability_form,
+                               capability2Form=capability2_form)
 
 
 if __name__ == '__main__':
