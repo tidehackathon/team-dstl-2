@@ -269,14 +269,22 @@ def cross_domain_solution_by_nation():
 def multi_domain_solution_by_nation():
     # Generate Form
     nation_form = NationForm()
+    exercise_form = ExersiceFrom()
     # Initial Query
-    query = "select n.name AS NATION_NAME, t.name as task_type, c.name AS CAPABILITY_NAME  from tasks t inner join" \
-            " capability_tasks ct on t.id = ct.task_id inner join capabilities c on c.id = ct.capability_id inner" \
-            " join nations n on n.id = c.nation_id where t.name = 'Multi-Domain Operations' and n.id = "
+    query = "select c.name AS CAPABILITY_NAME, t2.name, n.name AS NATION_NAME, tp.exercise_cycle from " \
+            "test_participants tp inner join testcases t on t.id = tp.capability_id " \
+            "inner join capability_tasks ct on t.id = ct.task_id " \
+            "inner join tasks t2 on t2.id = ct.task_id " \
+            "inner join capabilities c on c.id = ct.capability_id inner join nations n on n.id = c.nation_id " \
+            "where t2.name = 'Multi-Domain Operations' and n.id = "
+    query2 = " and tp.exercise_cycle = '"
+    query3 = "'"
     # Form Validation and automatic generation of user query
     panel_title_prefix = 'Multidomain Solutions for Nation: '
-    return nation_form_validation(nation_form, nation_form.nationResult.data,
-                                  'multi_domain_solution_by_nation_search.html', query, panel_title_prefix)
+    return nation_form_validation(nation_form, nation_form.nationResult.data, exercise_form,
+                                  exercise_form.exersiceResult.data,
+                                  'multi_domain_solution_by_nation_search.html', query, query2, query3,
+                                  panel_title_prefix)
 
 
 @app.route('/cross_dom_solution_&_multi_dom_ops_by_nation_search.html', methods=['post', 'get'])
