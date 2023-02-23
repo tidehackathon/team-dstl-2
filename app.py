@@ -164,8 +164,8 @@ def multi_Domain_Operations_By_Nation():
     # Initial Query
     query = "select t.name as Task_Name, c.name AS CAPABILITY_NAME, c.maturity as Capability_Maturity, n.name" \
             " AS NATION_NAME from tasks t inner join capability_tasks ct on t.id = ct.task_id inner join capabilities" \
-            " c on c.id = ct.capability_id inner join nations n on n.id = c.nation_id where t.id = "
-    query2 = " and n.id = "
+            " c on c.id = ct.capability_id inner join nations n on n.id = c.nation_id where t.name = '"
+    query2 = "' and n.id = "
     # Form Validation and automatic generation of user query
     if nation_form.validate_on_submit():
         print(nation_form.nationResult.data)
