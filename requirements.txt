@@ -1,4 +1,3 @@
-psycopg
 flask
 wtforms
 flask_wtf
