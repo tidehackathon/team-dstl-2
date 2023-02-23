@@ -157,7 +157,7 @@ def nation_form_validation(nation_form, nation_form_result, exercise_form, exers
         print("Validation Failed")
         print("Form Errors ", nation_form.errors)
 
-    return render_template(html_page_received, nationForm=nation_form, exerciseForm=exercise_form)
+    return render_template(html_page_received, nationForm=nation_form, exersiceForm=exercise_form)
 
 
 @app.route('/', methods=['post', 'get'])
