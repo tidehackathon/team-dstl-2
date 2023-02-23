@@ -177,7 +177,7 @@ def multi_Domain_Operations_By_Nation():
         complete_query = query + selected_capability + query2 + selected_nation
         
         # Create new panel in the grafana dashboard
-        panel_title = 'Multi Domain Operations: {}, {}'.format(selected_capability, selected_nation)
+        panel_title = 'Multidomain Operation Capability <{}> for Nation {}'.format(selected_capability, selected_nation)
         gfapi.create_panel_on_grafana(GF_USERNAME, GF_PASSWORD, GF_IP_ADDR, GF_PORT, GF_DASHBOARD_UID, complete_query, panel_title)
 
         print(complete_query)
@@ -298,7 +298,7 @@ def measure_cap_between_two_nations():
         selected_capability = underscore_replacer(selected_capability[0])
         complete_query = query + selected_capability + query2 + selected_nation1 + query3 + selected_capability + query4 + selected_nation2 + query5
         # Create new panel in the grafana dashboard
-        panel_title = 'Compare Capability <{}> for: {}, {}'.format(selected_capability, selected_nation1, selected_nation2)
+        panel_title = 'Compare Capability <{}> for Nations: {}, {}'.format(selected_capability, selected_nation1, selected_nation2)
         gfapi.create_panel_on_grafana(GF_USERNAME, GF_PASSWORD, GF_IP_ADDR, GF_PORT, GF_DASHBOARD_UID, complete_query, panel_title)
 
         return render_template("compare_nation_results.html",
@@ -389,7 +389,7 @@ def measure_two_cap_between_two_nations():
         selected_nation2 = change_Nation_Mapping(selected_nation2)
         complete_query = query + selected_capability1 + query2 + selected_capability2 + query3 + selected_nation1 + query4 + selected_capability1 + query5 + selected_capability2 + query6 + selected_nation2 + query7
         # Create new panel in the grafana dashboard
-        panel_title = '2 Capabilities between 2 Nations: {}, {}, {}, {}'.format(selected_capability1, selected_capability2, selected_nation1, selected_nation2)
+        panel_title = 'Measure 2 Capabilities between 2 Nations: {}, {}, {}, {}'.format(selected_capability1, selected_capability2, selected_nation1, selected_nation2)
         gfapi.create_panel_on_grafana(GF_USERNAME, GF_PASSWORD, GF_IP_ADDR, GF_PORT, GF_DASHBOARD_UID, complete_query, panel_title)
 
         return render_template("compare_nation_results.html",
