@@ -38,15 +38,23 @@ class NationForm(FlaskForm):
     nationResult = MultiCheckboxField('Label', choices=files)
 
 
-class CapabilityForm(FlaskForm):
-    string_of_capabilities = ['Data_Centric_Security_Approach\r\nConformance_Testing\r\n'
+class TaskFrom(FlaskForm):
+    string_of_tasks = ['Data_Centric_Security_Approach\r\nConformance_Testing\r\n'
                               'De-risking_Coalition_Operations\r\nCross-Domain_Solutions\r\nData_and_Analytics\r\n'
                               'Connecting_sensor_-_decision_maker_-_effector\r\nFederated_Mission_Networking\r\n'
                               'Multi-Domain_Operations\r\nStandards_Validation\r\n']
-    list_of_capabilities = string_of_capabilities[0].split()
+    list_of_tasks = string_of_tasks[0].split()
     # create a list of value/description tuples
-    files = [(x, x) for x in list_of_capabilities]
+    files = [(x, x) for x in list_of_tasks]
     capabilityResult = MultiCheckboxField('Label', choices=files)
+
+
+class ExersiceFrom(FlaskForm):
+    string_of_exersices = ['CWIX_2021\r\nCWIX_2022\r\n']
+    list_of_exersices = string_of_exersices[0].split()
+    # create a list of value/description tuples
+    files = [(x, x) for x in list_of_exersices]
+    exersiceResult = MultiCheckboxField('Label', choices=files)
 
 
 def underscore_replacer(capability):
@@ -157,24 +165,31 @@ def init_state():
     return render_template('index.html')
 
 
-@app.route('/multi_Domain_Operations_By_Nation_search.html', methods=['post', 'get'])
-def multi_Domain_Operations_By_Nation():
+@app.route('/see_nation_capabilitie_by_exersise.html', methods=['post', 'get'])
+def see_nation_capabilitie_by_exersise():
     # Generate Form
     nation_form = NationForm()
-    capability_form = CapabilityForm()
+    task_form = TaskFrom()
+    exersise_form = ExersiceFrom()
     # Initial Query
-    query = "select t.name as Task_Name, c.name AS CAPABILITY_NAME, c.maturity as Capability_Maturity, n.name" \
-            " AS NATION_NAME from tasks t inner join capability_tasks ct on t.id = ct.task_id inner join capabilities" \
-            " c on c.id = ct.capability_id inner join nations n on n.id = c.nation_id where t.name = '"
+    query = "select c.name AS CAPABILITY_NAME, t2.name, n.name AS NATION_NAME, tp.exercise_cycle from" \
+            " test_participants tp  inner join testcases t on t.id = tp.capability_id " \
+            "inner join capability_tasks ct on t.id = ct.task_id  inner join tasks t2 on t2.id = ct.task_id  " \
+            "inner join capabilities c on c.id = ct.capability_id  " \
+            "inner join nations n on n.id = c.nation_id " \
+            "where tp.exercise_cycle = '"
     query2 = "' and n.id = "
+    query3 = " and t2.name = '"
+    query4 = "'"
     # Form Validation and automatic generation of user query
     if nation_form.validate_on_submit():
-        print(nation_form.nationResult.data)
         selected_nation = nation_form.nationResult.data
-        selected_capability = capability_form.capabilityResult.data
+        selected_capability = task_form.capabilityResult.data
+        selected_exercise = exersise_form.exersiceResult.data
         selected_nation = change_Nation_Mapping(selected_nation)
         selected_capability = underscore_replacer(selected_capability)
-        complete_query = query + selected_capability + query2 + selected_nation
+        selected_exercise = underscore_replacer(selected_exercise)
+        complete_query = query + selected_exercise + query2 + selected_nation + query3 + selected_capability + query4
         
         # Create new panel in the grafana dashboard
         panel_title = 'Multidomain Operation Capability <{}> for Nation {}'.format(selected_capability, selected_nation)
@@ -182,13 +197,13 @@ def multi_Domain_Operations_By_Nation():
 
         print(complete_query)
 
-        return render_template("by_nation_result.html",
-                               nationData=nation_form.nationResult.data, completeQuery=complete_query)
+        return render_template("by_nation_result.html", completeQuery=complete_query)
     else:
         print("Validation Failed")
         print("Nation Form Errors ", nation_form.errors)
 
-    return render_template('multi_Domain_Operations_By_Nation_search.html', nationForm=nation_form, capabilityForm=capability_form)
+    return render_template('see_nation_capabilitie_by_exersise.html', nationForm=nation_form, capabilityForm=task_form,
+                           exersiceForm=exersise_form)
 
 
 @app.route('/ineroperability_issues_by_nation_search.html', methods=['post', 'get'])
@@ -271,7 +286,7 @@ def measure_cap_between_two_nations():
     # Generate Form
     nation1_form = NationForm()
     nation2_form = NationForm()
-    capability_form = CapabilityForm()
+    capability_form = TaskFrom()
     # Initial Query
     query = "select new_table.NATION_NAME, count(new_table.CAPABILITY_NAME) from" \
             " (	" \
@@ -360,8 +375,8 @@ def measure_two_cap_between_two_nations():
     # Generate Form
     nation1_form = NationForm()
     nation2_form = NationForm()
-    capability_form = CapabilityForm()
-    capability2_form = CapabilityForm()
+    capability_form = TaskFrom()
+    capability2_form = TaskFrom()
     # Initial Query
     query = "select new_table.NATION_NAME, count(new_table.capability_name) from " \
             "( select n.name AS NATION_NAME, t.name as task_type, c.name AS CAPABILITY_NAME  " \
@@ -412,7 +427,7 @@ def measure_two_cap_between_two_nations():
 def cap_mat_by_nation():
     # Generate Form
     nation_form = NationForm()
-    capability_form = CapabilityForm()
+    capability_form = TaskFrom()
     # Initial Query
     query = "select table1.capability_maturity, count(capability_maturity) as cap_mat from " \
             "( select n.name as nation_name, c.name as capability_name, c.maturity as capability_maturity, " \
