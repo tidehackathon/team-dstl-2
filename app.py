@@ -229,6 +229,7 @@ def interoperability_issue_by_nation():
 def multi_lateral_interoperablility_program_by_nation():
     # Generate Form
     nation_form = NationForm()
+    exercise_form = ExersiceFrom()
     # Initial Query
     query = "select n.name as Nation_Name, fa.name as focus_area_name, o.name as objective_name, t.exercise_cycle " \
             "from focus_areas fa inner join objectives o on o.focus_area_id = fa.id inner join test_objectives to2" \
@@ -236,10 +237,12 @@ def multi_lateral_interoperablility_program_by_nation():
             " test_participants tp on tp.testcase_id  = t.id inner join capabilities c on c.id = tp.capability_id" \
             " inner join nations n on n.id = c.nation_id where fa.name = 'Multilateral Interoperability Programme'" \
             " and n.id = "
+    query2 = " and t.exercise_cycle = '"
+    query3 = "'"
     # Form Validation and automatic generation of user query
     panel_title_prefix = 'Multilateral Interoperability Programmes for Nation: '
-    return nation_form_validation(nation_form, nation_form.nationResult.data,
-                                  'multi_lateral_interoperability_program_by_nation_search.html', query, panel_title_prefix)
+    return nation_form_validation(nation_form, nation_form.nationResult.data, exercise_form, exercise_form.exersiceResult.data,
+                                  'multi_lateral_interoperability_program_by_nation_search.html', query, query2, query3, panel_title_prefix)
 
 
 @app.route('/cross_domain_solution_by_nation_search.html', methods=['post', 'get'])
