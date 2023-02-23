@@ -160,17 +160,20 @@ def init_state():
 def multi_Domain_Operations_By_Nation():
     # Generate Form
     nation_form = NationForm()
+    capability_form = CapabilityForm()
     # Initial Query
     query = "select t.name as Task_Name, c.name AS CAPABILITY_NAME, c.maturity as Capability_Maturity, n.name" \
             " AS NATION_NAME from tasks t inner join capability_tasks ct on t.id = ct.task_id inner join capabilities" \
-            " c on c.id = ct.capability_id inner join nations n on n.id = c.nation_id where t.id = "
-    query2 = " and n.id = "
+            " c on c.id = ct.capability_id inner join nations n on n.id = c.nation_id where t.name = '"
+    query2 = "' and n.id = "
     # Form Validation and automatic generation of user query
     if nation_form.validate_on_submit():
         print(nation_form.nationResult.data)
         selected_nation = nation_form.nationResult.data
+        selected_capability = capability_form.capabilityResult.data
         selected_nation = change_Nation_Mapping(selected_nation)
-        complete_query = query + selected_nation + query2 + selected_nation
+        selected_capability = underscore_replacer(selected_capability)
+        complete_query = query + selected_capability + query2 + selected_nation
         # Create new panel in the grafana dashboard
         gfapi.create_panel_on_grafana(GF_USERNAME, GF_PASSWORD, GF_IP_ADDR, GF_PORT, GF_DASHBOARD_UID, complete_query)
 
@@ -182,7 +185,7 @@ def multi_Domain_Operations_By_Nation():
         print("Validation Failed")
         print("Nation Form Errors ", nation_form.errors)
 
-    return render_template('multi_Domain_Operations_By_Nation_search.html', nationForm=nation_form)
+    return render_template('multi_Domain_Operations_By_Nation_search.html', nationForm=nation_form, capabilityForm=capability_form)
 
 
 @app.route('/ineroperability_issues_by_nation_search.html', methods=['post', 'get'])
