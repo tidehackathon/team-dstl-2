@@ -7,14 +7,16 @@ SECRET_KEY = 'development'
 app = Flask(__name__)
 app.config.from_object(__name__)
 
+# GLOBAL VARIABLES
+
 # Grafana configs
-gf_dashboard_uid = '1MB0c91Vz'
+GF_DASHBOARD_UID = '1MB0c91Vz'
 
 # Grafana host details
-gf_username = 'admin'
-gf_password = 'qwerty'
-gf_ip_addr = 'grafana' # with docker compose, the ip_addr is just the name of the service
-gf_port = '3000'
+GF_USERNAME = 'admin'
+GF_PASSWORD = 'qwerty'
+GF_IP_ADDR = 'grafana'  # with docker compose, the ip_addr is just the name of the service
+GF_PORT = '3000'
 
 
 class MultiCheckboxField(SelectMultipleField):
@@ -130,20 +132,16 @@ def change_Nation_Mapping(nation_list):
     return str(nation_mapping[nation_list])
 
 
-def nation_form_validation(form_type, form_result, html_page_received, query):
+def nation_form_validation(form_type, form_result, html_page_received, query, panel_title_prefix):
     if form_type.validate_on_submit():
         print(form_result)
         selected_nation = form_result
         selected_nation = change_Nation_Mapping(selected_nation)
         complete_query = query + selected_nation
 
-        # Create panel in dashboard
-        dashboard = gfapi.get_dashboard(gf_username, gf_password, gf_ip_addr, gf_port, gf_dashboard_uid)
-        # Add new panel to dashboard
-        dashboard = gfapi.add_panel_to_dashboard(complete_query,dashboard)
-
-        # Create new panel in the dashboard
-        gfapi.update_dashboard_on_grafana(gf_username, gf_password, gf_ip_addr, gf_port, dashboard)
+        # Create new panel in the grafana dashboard
+        panel_title = "{} {}".format(panel_title_prefix, selected_nation)
+        gfapi.create_panel_on_grafana(GF_USERNAME, GF_PASSWORD, GF_IP_ADDR, GF_PORT, GF_DASHBOARD_UID, complete_query, panel_title)
 
         return render_template("by_nation_result.html",
                                nationData=form_result, completeQuery=complete_query)
@@ -163,21 +161,26 @@ def init_state():
 def multi_Domain_Operations_By_Nation():
     # Generate Form
     nation_form = NationForm()
+    capability_form = CapabilityForm()
     # Initial Query
     query = "select t.name as Task_Name, c.name AS CAPABILITY_NAME, c.maturity as Capability_Maturity, n.name" \
             " AS NATION_NAME from tasks t inner join capability_tasks ct on t.id = ct.task_id inner join capabilities" \
-            " c on c.id = ct.capability_id inner join nations n on n.id = c.nation_id where t.id = "
-    query2 = " and n.id = "
+            " c on c.id = ct.capability_id inner join nations n on n.id = c.nation_id where t.name = '"
+    query2 = "' and n.id = "
     # Form Validation and automatic generation of user query
     if nation_form.validate_on_submit():
         print(nation_form.nationResult.data)
         selected_nation = nation_form.nationResult.data
+        selected_capability = capability_form.capabilityResult.data
         selected_nation = change_Nation_Mapping(selected_nation)
-        complete_query = query + selected_nation + query2 + selected_nation
+        selected_capability = underscore_replacer(selected_capability)
+        complete_query = query + selected_capability + query2 + selected_nation
+        
+        # Create new panel in the grafana dashboard
+        panel_title = 'Multidomain Operation Capability <{}> for Nation {}'.format(selected_capability, selected_nation)
+        gfapi.create_panel_on_grafana(GF_USERNAME, GF_PASSWORD, GF_IP_ADDR, GF_PORT, GF_DASHBOARD_UID, complete_query, panel_title)
 
         print(complete_query)
-
-
 
         return render_template("by_nation_result.html",
                                nationData=nation_form.nationResult.data, completeQuery=complete_query)
@@ -185,7 +188,7 @@ def multi_Domain_Operations_By_Nation():
         print("Validation Failed")
         print("Nation Form Errors ", nation_form.errors)
 
-    return render_template('multi_Domain_Operations_By_Nation_search.html', nationForm=nation_form)
+    return render_template('multi_Domain_Operations_By_Nation_search.html', nationForm=nation_form, capabilityForm=capability_form)
 
 
 @app.route('/ineroperability_issues_by_nation_search.html', methods=['post', 'get'])
@@ -198,8 +201,9 @@ def interoperability_issue_by_nation():
             " tp.capability_id  inner join nations n on n.id = c.nation_id where t.overall_result" \
             " = 'Interoperability Issue' and n.id = "
     # Form Validation and automatic generation of user query
+    panel_title_prefix = 'Interoperability Issues for Specified Country: '
     return nation_form_validation(nation_form, nation_form.nationResult.data,
-                                  'ineroperability_issues_by_nation_search.html', query)
+                                  'ineroperability_issues_by_nation_search.html', query, panel_title_prefix)
 
 
 @app.route('/multi_lateral_interoperability_program_by_nation_search.html', methods=['post', 'get'])
@@ -214,8 +218,9 @@ def multi_lateral_interoperablility_program_by_nation():
             " inner join nations n on n.id = c.nation_id where fa.name = 'Multilateral Interoperability Programme'" \
             " and n.id = "
     # Form Validation and automatic generation of user query
+    panel_title_prefix = 'Multilateral Interoperability Programmes for Nation: '
     return nation_form_validation(nation_form, nation_form.nationResult.data,
-                                  'multi_lateral_interoperability_program_by_nation_search.html', query)
+                                  'multi_lateral_interoperability_program_by_nation_search.html', query, panel_title_prefix)
 
 
 @app.route('/cross_domain_solution_by_nation_search.html', methods=['post', 'get'])
@@ -227,8 +232,9 @@ def cross_domain_solution_by_nation():
             " capability_tasks ct on t.id = ct.task_id inner join capabilities c on c.id = ct.capability_id inner" \
             " join nations n on n.id = c.nation_id where t.name = 'Cross-Domain Solutions' and n.id = "
     # Form Validation and automatic generation of user query
+    panel_title_prefix = 'Multilateral Interoperability Programmes for Nation: '
     return nation_form_validation(nation_form, nation_form.nationResult.data,
-                                  'cross_domain_solution_by_nation_search.html', query)
+                                  'cross_domain_solution_by_nation_search.html', query, panel_title_prefix)
 
 
 @app.route('/multi_domain_solution_by_nation_search.html', methods=['post', 'get'])
@@ -240,8 +246,9 @@ def multi_domain_solution_by_nation():
             " capability_tasks ct on t.id = ct.task_id inner join capabilities c on c.id = ct.capability_id inner" \
             " join nations n on n.id = c.nation_id where t.name = 'Multi-Domain Operations' and n.id = "
     # Form Validation and automatic generation of user query
+    panel_title_prefix = 'Multidomain Solutions for Nation: '
     return nation_form_validation(nation_form, nation_form.nationResult.data,
-                                  'multi_domain_solution_by_nation_search.html', query)
+                                  'multi_domain_solution_by_nation_search.html', query, panel_title_prefix)
 
 
 @app.route('/cross_dom_solution_&_multi_dom_ops_by_nation_search.html', methods=['post', 'get'])
@@ -254,6 +261,7 @@ def multi_domain_solution_and_cross_dom_sol_by_nation():
             "join nations n on n.id = c.nation_id where (t.name = 'Multi-Domain Operations' or t.name = " \
             "'Cross-Domain Solutions') and n.id = "
     # Form Validation and automatic generation of user query
+    panel_title_prefix = 'Cross Domain and Multi Domain Operations for Nation: '
     return nation_form_validation(nation_form, nation_form.nationResult.data,
                                   'cross_dom_solution_&_multi_dom_ops_by_nation_search.html', query)
 
@@ -289,6 +297,9 @@ def measure_cap_between_two_nations():
         selected_nation2 = change_Nation_Mapping(selected_nation2)
         selected_capability = underscore_replacer(selected_capability[0])
         complete_query = query + selected_capability + query2 + selected_nation1 + query3 + selected_capability + query4 + selected_nation2 + query5
+        # Create new panel in the grafana dashboard
+        panel_title = 'Compare Capability <{}> for Nations: {}, {}'.format(selected_capability, selected_nation1, selected_nation2)
+        gfapi.create_panel_on_grafana(GF_USERNAME, GF_PASSWORD, GF_IP_ADDR, GF_PORT, GF_DASHBOARD_UID, complete_query, panel_title)
 
         return render_template("compare_nation_results.html",
                                nation1Data=selected_nation1, nation2Data=selected_nation2,
@@ -328,6 +339,9 @@ def interops_issue_between_two_nations():
         selected_nation1 = change_Nation_Mapping(selected_nation1)
         selected_nation2 = change_Nation_Mapping(selected_nation2)
         complete_query = query + selected_nation1 + query2 + selected_nation2 + query3
+        # Create new panel in the grafana dashboard
+        panel_title = 'Interoperability issues between 2 nations: {}, {}'.format(selected_nation1, selected_nation2)
+        gfapi.create_panel_on_grafana(GF_USERNAME, GF_PASSWORD, GF_IP_ADDR, GF_PORT, GF_DASHBOARD_UID, complete_query, panel_title)
 
         return render_template("compare_nation_results.html",
                                nation1Data=selected_nation1, nation2Data=selected_nation2, completeQuery=complete_query)
@@ -374,6 +388,9 @@ def measure_two_cap_between_two_nations():
         selected_nation1 = change_Nation_Mapping(selected_nation1)
         selected_nation2 = change_Nation_Mapping(selected_nation2)
         complete_query = query + selected_capability1 + query2 + selected_capability2 + query3 + selected_nation1 + query4 + selected_capability1 + query5 + selected_capability2 + query6 + selected_nation2 + query7
+        # Create new panel in the grafana dashboard
+        panel_title = 'Measure 2 Capabilities between 2 Nations: {}, {}, {}, {}'.format(selected_capability1, selected_capability2, selected_nation1, selected_nation2)
+        gfapi.create_panel_on_grafana(GF_USERNAME, GF_PASSWORD, GF_IP_ADDR, GF_PORT, GF_DASHBOARD_UID, complete_query, panel_title)
 
         return render_template("compare_nation_results.html",
                                nation1Data=selected_nation1, nation2Data=selected_nation2,
@@ -387,7 +404,61 @@ def measure_two_cap_between_two_nations():
         print("Capability 2 From Errors ", capability2_form.errors)
 
         return render_template('measure_two_capabilities_between_two_nations.html', nation1Form=nation1_form,
-                               nation2Form=nation2_form, capabilityForm=capability_form, capability2Form=capability2_form)
+                               nation2Form=nation2_form, capabilityForm=capability_form,
+                               capability2Form=capability2_form)
+
+
+@app.route('/capability_maturity_by_nation.html', methods=['post', 'get'])
+def cap_mat_by_nation():
+    # Generate Form
+    nation_form = NationForm()
+    capability_form = CapabilityForm()
+    # Initial Query
+    query = "select table1.capability_maturity, count(capability_maturity) as cap_mat from " \
+            "( select n.name as nation_name, c.name as capability_name, c.maturity as capability_maturity, " \
+            "t.name as task_name from nations n inner join capabilities c on c.nation_id = n.id " \
+            "inner join capability_tasks ct on ct.capability_id = c.id inner join tasks t on t.id = ct.task_id " \
+            "where n.id = "
+    query2 = " and t.name = '"
+    query3 = "' and c.maturity = 'Near-Fielded' ) as table1 group by table1.capability_maturity " \
+             "union select table2.capability_maturity, count(capability_maturity) as cap_mat " \
+             " from ( select n.name as nation_name, c.name as capability_name, c.maturity as capability_maturity," \
+             " t.name as task_name from nations n inner join capabilities c on c.nation_id = n.id " \
+             "inner join capability_tasks ct on ct.capability_id = c.id inner join tasks t on t.id = ct.task_id" \
+             " where n.id = "
+    query4 = " and t.name= '"
+    query5 = "'  and c.maturity = 'Fielded' ) as table2 group by table2.capability_maturity union " \
+             "select table3.capability_maturity, count(capability_maturity) as cap_mat  " \
+             "from ( select n.name as nation_name, c.name as capability_name, c.maturity as " \
+             "capability_maturity, t.name as task_name from nations n inner join capabilities c on" \
+             " c.nation_id = n.id inner join capability_tasks ct on ct.capability_id = c.id " \
+             "inner join tasks t on t.id = ct.task_id where n.id = "
+    query6 = " and t.name = '"
+    query7 = "' and c.maturity = 'Developmental' ) as table3 group by table3.capability_maturity union" \
+             " select table4.capability_maturity, count(capability_maturity) as cap_mat  from" \
+             " ( select n.name as nation_name, c.name as capability_name, c.maturity as capability_maturity," \
+             " t.name as task_name from nations n inner join capabilities c on c.nation_id = n.id " \
+             "inner join capability_tasks ct on ct.capability_id = c.id " \
+             "inner join tasks t on t.id = ct.task_id where n.id = "
+    query8 = " and t.name = '"
+    query9 = "' and c.maturity = 'Experimental' ) as table4 group by table4.capability_maturity"
+    if nation_form.validate_on_submit() and capability_form.validate_on_submit():
+        selected_nation = nation_form.nationResult.data
+        selected_nation = change_Nation_Mapping(selected_nation)
+        selected_capability = capability_form.capabilityResult.data
+        selected_capability = underscore_replacer(selected_capability)
+        complete_query = query + selected_nation + query2 + selected_capability + query3 + selected_nation + query4 + selected_capability + query5 + selected_nation + query6 + selected_capability + query7 + selected_nation + query8 + selected_capability + query9
+        # Create new panel in the grafana dashboard
+        panel_title = "Capability Maturity for Nation {} for Capabilities <{}>".format(selected_nation, selected_capability)
+        gfapi.create_panel_on_grafana(GF_USERNAME, GF_PASSWORD, GF_IP_ADDR, GF_PORT, GF_DASHBOARD_UID, complete_query, panel_title)
+        return render_template('compare_nation_results.html', nation1data=selected_nation, capabilityData=selected_capability)
+    else:
+        print("Validation Failed")
+        print("Nation Form Errors ", nation_form.errors)
+        print("Capability Form Errors ", capability_form.errors)
+
+        return render_template('capability_maturity_by_nation.html', nationForm=nation_form,
+                               capabilityForm=capability_form)
 
 
 if __name__ == '__main__':

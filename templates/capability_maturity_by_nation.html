@@ -9,15 +9,18 @@
     <p>
         Nation Form Errors: {{ nationForm.errors }}
     </p>
+    <p>
+        Capability Form Errors: {{ capabilityForm.errors }}
+    </p>
     <form method="post">
         <table>
             <tr>
-                <th>Nation</th>
-                <th>Capabiliy</th>
+                <th>Nation 1</th>
+                <th>Capability</th>
             </tr>
             <tr>
                 <td>{{ nationForm.hidden_tag() }} {{ nationForm.nationResult }}</td>
-                <td> {{ capabilityForm.hidden_tag() }} {{ capabilityForm.capabilityResult }}</td>
+                <td>{{ capabilityForm.hidden_tag() }} {{ capabilityForm.capabilityResult }}</td>
             </tr>
         </table>
         <p><button type="submit">Submit</button></p>
