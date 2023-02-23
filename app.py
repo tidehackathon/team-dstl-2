@@ -256,9 +256,9 @@ def cross_domain_solution_by_nation():
             "inner join capability_tasks ct on t.id = ct.task_id " \
             "inner join tasks t2 on t2.id = ct.task_id " \
             "inner join capabilities c on c.id = ct.capability_id inner join nations n on n.id = c.nation_id " \
-            "where t2.name = 'Cross-Domain Solutions' and tp.exercise_cycle = '"
-    query2 = "' and n.id = "
-    query3 = ""
+            "where t2.name = 'Cross-Domain Solutions' and n.id = "
+    query2 = " and tp.exercise_cycle = '"
+    query3 = "'"
     # Form Validation and automatic generation of user query
     panel_title_prefix = 'Multilateral Interoperability Programmes for Nation: '
     return nation_form_validation(nation_form, nation_form.nationResult.data, exercise_form, exercise_form.exersiceResult.data,
