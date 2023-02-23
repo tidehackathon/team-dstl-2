@@ -132,7 +132,7 @@ def change_Nation_Mapping(nation_list):
     return str(nation_mapping[nation_list])
 
 
-def nation_form_validation(form_type, form_result, html_page_received, query):
+def nation_form_validation(form_type, form_result, html_page_received, query, panel_title_prefix):
     if form_type.validate_on_submit():
         print(form_result)
         selected_nation = form_result
@@ -140,7 +140,8 @@ def nation_form_validation(form_type, form_result, html_page_received, query):
         complete_query = query + selected_nation
 
         # Create new panel in the grafana dashboard
-        gfapi.create_panel_on_grafana(GF_USERNAME, GF_PASSWORD, GF_IP_ADDR, GF_PORT, GF_DASHBOARD_UID, complete_query)
+        panel_title = "{} {}".format(panel_title_prefix, selected_nation)
+        gfapi.create_panel_on_grafana(GF_USERNAME, GF_PASSWORD, GF_IP_ADDR, GF_PORT, GF_DASHBOARD_UID, complete_query, panel_title)
 
         return render_template("by_nation_result.html",
                                nationData=form_result, completeQuery=complete_query)
@@ -174,8 +175,10 @@ def multi_Domain_Operations_By_Nation():
         selected_nation = change_Nation_Mapping(selected_nation)
         selected_capability = underscore_replacer(selected_capability)
         complete_query = query + selected_capability + query2 + selected_nation
+        
         # Create new panel in the grafana dashboard
-        gfapi.create_panel_on_grafana(GF_USERNAME, GF_PASSWORD, GF_IP_ADDR, GF_PORT, GF_DASHBOARD_UID, complete_query)
+        panel_title = 'Multidomain Operation Capability <{}> for Nation {}'.format(selected_capability, selected_nation)
+        gfapi.create_panel_on_grafana(GF_USERNAME, GF_PASSWORD, GF_IP_ADDR, GF_PORT, GF_DASHBOARD_UID, complete_query, panel_title)
 
         print(complete_query)
 
@@ -198,8 +201,9 @@ def interoperability_issue_by_nation():
             " tp.capability_id  inner join nations n on n.id = c.nation_id where t.overall_result" \
             " = 'Interoperability Issue' and n.id = "
     # Form Validation and automatic generation of user query
+    panel_title_prefix = 'Interoperability Issues for Specified Country: '
     return nation_form_validation(nation_form, nation_form.nationResult.data,
-                                  'ineroperability_issues_by_nation_search.html', query)
+                                  'ineroperability_issues_by_nation_search.html', query, panel_title_prefix)
 
 
 @app.route('/multi_lateral_interoperability_program_by_nation_search.html', methods=['post', 'get'])
@@ -214,8 +218,9 @@ def multi_lateral_interoperablility_program_by_nation():
             " inner join nations n on n.id = c.nation_id where fa.name = 'Multilateral Interoperability Programme'" \
             " and n.id = "
     # Form Validation and automatic generation of user query
+    panel_title_prefix = 'Multilateral Interoperability Programmes for Nation: '
     return nation_form_validation(nation_form, nation_form.nationResult.data,
-                                  'multi_lateral_interoperability_program_by_nation_search.html', query)
+                                  'multi_lateral_interoperability_program_by_nation_search.html', query, panel_title_prefix)
 
 
 @app.route('/cross_domain_solution_by_nation_search.html', methods=['post', 'get'])
@@ -227,8 +232,9 @@ def cross_domain_solution_by_nation():
             " capability_tasks ct on t.id = ct.task_id inner join capabilities c on c.id = ct.capability_id inner" \
             " join nations n on n.id = c.nation_id where t.name = 'Cross-Domain Solutions' and n.id = "
     # Form Validation and automatic generation of user query
+    panel_title_prefix = 'Multilateral Interoperability Programmes for Nation: '
     return nation_form_validation(nation_form, nation_form.nationResult.data,
-                                  'cross_domain_solution_by_nation_search.html', query)
+                                  'cross_domain_solution_by_nation_search.html', query, panel_title_prefix)
 
 
 @app.route('/multi_domain_solution_by_nation_search.html', methods=['post', 'get'])
@@ -240,8 +246,9 @@ def multi_domain_solution_by_nation():
             " capability_tasks ct on t.id = ct.task_id inner join capabilities c on c.id = ct.capability_id inner" \
             " join nations n on n.id = c.nation_id where t.name = 'Multi-Domain Operations' and n.id = "
     # Form Validation and automatic generation of user query
+    panel_title_prefix = 'Multidomain Solutions for Nation: '
     return nation_form_validation(nation_form, nation_form.nationResult.data,
-                                  'multi_domain_solution_by_nation_search.html', query)
+                                  'multi_domain_solution_by_nation_search.html', query, panel_title_prefix)
 
 
 @app.route('/cross_dom_solution_&_multi_dom_ops_by_nation_search.html', methods=['post', 'get'])
@@ -254,6 +261,7 @@ def multi_domain_solution_and_cross_dom_sol_by_nation():
             "join nations n on n.id = c.nation_id where (t.name = 'Multi-Domain Operations' or t.name = " \
             "'Cross-Domain Solutions') and n.id = "
     # Form Validation and automatic generation of user query
+    panel_title_prefix = 'Cross Domain and Multi Domain Operations for Nation: '
     return nation_form_validation(nation_form, nation_form.nationResult.data,
                                   'cross_dom_solution_&_multi_dom_ops_by_nation_search.html', query)
 
@@ -290,7 +298,8 @@ def measure_cap_between_two_nations():
         selected_capability = underscore_replacer(selected_capability[0])
         complete_query = query + selected_capability + query2 + selected_nation1 + query3 + selected_capability + query4 + selected_nation2 + query5
         # Create new panel in the grafana dashboard
-        gfapi.create_panel_on_grafana(GF_USERNAME, GF_PASSWORD, GF_IP_ADDR, GF_PORT, GF_DASHBOARD_UID, complete_query)
+        panel_title = 'Compare Capability <{}> for Nations: {}, {}'.format(selected_capability, selected_nation1, selected_nation2)
+        gfapi.create_panel_on_grafana(GF_USERNAME, GF_PASSWORD, GF_IP_ADDR, GF_PORT, GF_DASHBOARD_UID, complete_query, panel_title)
 
         return render_template("compare_nation_results.html",
                                nation1Data=selected_nation1, nation2Data=selected_nation2,
@@ -331,7 +340,8 @@ def interops_issue_between_two_nations():
         selected_nation2 = change_Nation_Mapping(selected_nation2)
         complete_query = query + selected_nation1 + query2 + selected_nation2 + query3
         # Create new panel in the grafana dashboard
-        gfapi.create_panel_on_grafana(GF_USERNAME, GF_PASSWORD, GF_IP_ADDR, GF_PORT, GF_DASHBOARD_UID, complete_query)
+        panel_title = 'Interoperability issues between 2 nations: {}, {}'.format(selected_nation1, selected_nation2)
+        gfapi.create_panel_on_grafana(GF_USERNAME, GF_PASSWORD, GF_IP_ADDR, GF_PORT, GF_DASHBOARD_UID, complete_query, panel_title)
 
         return render_template("compare_nation_results.html",
                                nation1Data=selected_nation1, nation2Data=selected_nation2, completeQuery=complete_query)
@@ -379,7 +389,8 @@ def measure_two_cap_between_two_nations():
         selected_nation2 = change_Nation_Mapping(selected_nation2)
         complete_query = query + selected_capability1 + query2 + selected_capability2 + query3 + selected_nation1 + query4 + selected_capability1 + query5 + selected_capability2 + query6 + selected_nation2 + query7
         # Create new panel in the grafana dashboard
-        gfapi.create_panel_on_grafana(GF_USERNAME, GF_PASSWORD, GF_IP_ADDR, GF_PORT, GF_DASHBOARD_UID, complete_query)
+        panel_title = 'Measure 2 Capabilities between 2 Nations: {}, {}, {}, {}'.format(selected_capability1, selected_capability2, selected_nation1, selected_nation2)
+        gfapi.create_panel_on_grafana(GF_USERNAME, GF_PASSWORD, GF_IP_ADDR, GF_PORT, GF_DASHBOARD_UID, complete_query, panel_title)
 
         return render_template("compare_nation_results.html",
                                nation1Data=selected_nation1, nation2Data=selected_nation2,
