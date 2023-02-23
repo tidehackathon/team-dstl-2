@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Query Creator</title>
+</head>
+<body>
+    <h1>Query Creator</h1>
+    <p>
+        Nation Form Errors: {{ nationForm.errors }}
+    </p>
+    <p>
+        Capability Form Errors: {{ capabilityForm.errors }}
+    </p>
+    <form method="post">
+        <table>
+            <tr>
+                <th>Nation 1</th>
+                <th>Capability</th>
+            </tr>
+            <tr>
+                <td>{{ nationForm.hidden_tag() }} {{ nationForm.nationResult }}</td>
+                <td>{{ capabilityForm.hidden_tag() }} {{ capabilityForm.capabilityResult }}</td>
+            </tr>
+        </table>
+        <p><button type="submit">Submit</button></p>
+    </form>
+</body>
+</html>

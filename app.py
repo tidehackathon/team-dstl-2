@@ -397,5 +397,57 @@ def measure_two_cap_between_two_nations():
                                capability2Form=capability2_form)
 
 
+@app.route('/capability_maturity_by_nation.html', methods=['post', 'get'])
+def cap_mat_by_nation():
+    # Generate Form
+    nation_form = NationForm()
+    capability_form = CapabilityForm()
+    # Initial Query
+    query = "select table1.capability_maturity, count(capability_maturity) as cap_mat from " \
+            "( select n.name as nation_name, c.name as capability_name, c.maturity as capability_maturity, " \
+            "t.name as task_name from nations n inner join capabilities c on c.nation_id = n.id " \
+            "inner join capability_tasks ct on ct.capability_id = c.id inner join tasks t on t.id = ct.task_id " \
+            "where n.id = "
+    query2 = " and t.name = '"
+    query3 = "' and c.maturity = 'Near-Fielded' ) as table1 group by table1.capability_maturity " \
+             "union select table2.capability_maturity, count(capability_maturity) as cap_mat " \
+             " from ( select n.name as nation_name, c.name as capability_name, c.maturity as capability_maturity," \
+             " t.name as task_name from nations n inner join capabilities c on c.nation_id = n.id " \
+             "inner join capability_tasks ct on ct.capability_id = c.id inner join tasks t on t.id = ct.task_id" \
+             " where n.id = "
+    query4 = " and t.name= '"
+    query5 = "'  and c.maturity = 'Fielded' ) as table2 group by table2.capability_maturity union " \
+             "select table3.capability_maturity, count(capability_maturity) as cap_mat  " \
+             "from ( select n.name as nation_name, c.name as capability_name, c.maturity as " \
+             "capability_maturity, t.name as task_name from nations n inner join capabilities c on" \
+             " c.nation_id = n.id inner join capability_tasks ct on ct.capability_id = c.id " \
+             "inner join tasks t on t.id = ct.task_id where n.id = "
+    query6 = " and t.name = '"
+    query7 = "' and c.maturity = 'Developmental' ) as table3 group by table3.capability_maturity union" \
+             " select table4.capability_maturity, count(capability_maturity) as cap_mat  from" \
+             " ( select n.name as nation_name, c.name as capability_name, c.maturity as capability_maturity," \
+             " t.name as task_name from nations n inner join capabilities c on c.nation_id = n.id " \
+             "inner join capability_tasks ct on ct.capability_id = c.id " \
+             "inner join tasks t on t.id = ct.task_id where n.id = "
+    query8 = " and t.name = '"
+    query9 = "' and c.maturity = 'Experimental' ) as table4 group by table4.capability_maturity"
+    if nation_form.validate_on_submit() and capability_form.validate_on_submit():
+        selected_nation = nation_form.nationResult.data
+        selected_capability = capability_form.capabilityResult.data
+        selected_nation = change_Nation_Mapping(selected_nation)
+        selected_capability = underscore_replacer(selected_capability)
+        complete_query = query + selected_nation + query2 + selected_capability + query3 + selected_nation + query4 + selected_capability + query5 + selected_nation + query6 + selected_capability + query7 + selected_nation + query8 + selected_capability + query9
+        # Create new panel in the grafana dashboard
+        gfapi.create_panel_on_grafana(GF_USERNAME, GF_PASSWORD, GF_IP_ADDR, GF_PORT, GF_DASHBOARD_UID, complete_query)
+        return render_template('compare_nation_results.html', nation1data=selected_nation, capabilityData=selected_capability)
+    else:
+        print("Validation Failed")
+        print("Nation Form Errors ", nation_form.errors)
+        print("Capability Form Errors ", capability_form.errors)
+
+        return render_template('capability_maturity_by_nation.html', nationForm=nation_form,
+                               capabilityForm=capability_form)
+
+
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
