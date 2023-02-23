@@ -21,8 +21,7 @@ the Grafana API to create new dashboard panels.
 
 To start the program go to the root directory of the repo and run:
 
-    cd <repo root dir>
-
+    $ cd <repo root dir>
     $ docker compose up --build
 
 # Accessing the Flask Webapp and Grafana
@@ -57,7 +56,7 @@ To stop the program cleanly please:
 
 <li> In the terminal execute the below commands </li>
 
-    cd <repo root dir>
+    $ cd <repo root dir>
     $ docker compose down
 
 <li> Close all relevant instances of the terminal</li>
