@@ -1,6 +1,18 @@
 # team-dstl-2
 # TIDE HACKATHON 2023, Warsaw, Poland
 # Analytics Dashboard for Interoperability Challenge
+
+# Tidepedia Page
+The architecture document can be found at the team tidepedia page.
+
+https://tide.act.nato.int/mediawiki/tidepedia/index.php/Team_1118
+
+# Introduction
+The architecture consists of two 
+
+dstl_2_archi_diagram.png
+![Alt text](./dstl_2_archi_diagram.png?raw=true "Title")
+
 # Starting the Dashboard
 To start the program go to the following directory and run:
 
