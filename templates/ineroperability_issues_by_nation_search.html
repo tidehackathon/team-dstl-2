@@ -6,16 +6,15 @@
 </head>
 <body>
     <h1>Query Creator</h1>
-    <p>
-        Nation Form Errors: {{ nationForm.errors }}
-    </p>
     <form method="post">
         <table>
             <tr>
                 <th>Nation</th>
+                <th>Exercise</th>
             </tr>
             <tr>
-                <td>{{ nationForm.hidden_tag() }} {{ nationForm.nationResult }}</td>
+                <td> {{ nationForm.hidden_tag() }} {{ nationForm.nationResult }}</td>
+                <td> {{ exersiceForm.hidden_tag() }} {{ exersiceForm.exersiceResult</td>
             </tr>
         </table>
         <p><button type="submit">Submit</button></p>

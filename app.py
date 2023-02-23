@@ -140,24 +140,24 @@ def change_Nation_Mapping(nation_list):
     return str(nation_mapping[nation_list])
 
 
-def nation_form_validation(form_type, form_result, html_page_received, query, panel_title_prefix):
-    if form_type.validate_on_submit():
-        print(form_result)
-        selected_nation = form_result
+def nation_form_validation(nation_form, nation_form_result, exercise_form, exersice_form_result, html_page_received, query, query2, query3, panel_title_prefix):
+    if nation_form.validate_on_submit() and exercise_form.validate_on_submit():
+        selected_nation = nation_form_result
+        selected_exersise = exersice_form_result
         selected_nation = change_Nation_Mapping(selected_nation)
-        complete_query = query + selected_nation
+        selected_exersise = underscore_replacer(selected_exersise)
+        complete_query = query + selected_nation + query2 + selected_exersise + query3
 
         # Create new panel in the grafana dashboard
         panel_title = "{} {}".format(panel_title_prefix, selected_nation)
         gfapi.create_panel_on_grafana(GF_USERNAME, GF_PASSWORD, GF_IP_ADDR, GF_PORT, GF_DASHBOARD_UID, complete_query, panel_title)
 
-        return render_template("by_nation_result.html",
-                               nationData=form_result, completeQuery=complete_query)
+        return render_template("by_nation_result.html", completeQuery=complete_query)
     else:
         print("Validation Failed")
-        print("Form Errors ", form_type.errors)
+        print("Form Errors ", nation_form.errors)
 
-    return render_template(html_page_received, nationForm=form_type)
+    return render_template(html_page_received, nationForm=nation_form, exerciseForm=exercise_form)
 
 
 @app.route('/', methods=['post', 'get'])
@@ -210,15 +210,19 @@ def see_nation_capabilitie_by_exersise():
 def interoperability_issue_by_nation():
     # Generate Form
     nation_form = NationForm()
+    exercise_form = ExersiceFrom()
     # Initial Query
     query = "select n.name as Nation_Name, t.tc_number as testcase_number, t.exercise_cycle, t.overall_result from" \
-            " testcases t inner join test_participants tp on t.id = tp.testcase_id inner join capabilities c on c.id =" \
-            " tp.capability_id  inner join nations n on n.id = c.nation_id where t.overall_result" \
-            " = 'Interoperability Issue' and n.id = "
+            " testcases t inner join test_participants tp on t.id = tp.testcase_id " \
+            "inner join capabilities c on c.id = tp.capability_id  " \
+            "inner join nations n on n.id = c.nation_id " \
+            "where t.overall_result = 'Interoperability Issue' and n.id = "
+    query2 = " and t.exercise_cycle = '"
+    query3 = "'"
     # Form Validation and automatic generation of user query
     panel_title_prefix = 'Interoperability Issues for Specified Country: '
-    return nation_form_validation(nation_form, nation_form.nationResult.data,
-                                  'ineroperability_issues_by_nation_search.html', query, panel_title_prefix)
+    return nation_form_validation(nation_form, nation_form.nationResult.data, exercise_form, exercise_form.exersiceResult.data,
+                                  'ineroperability_issues_by_nation_search.html', query, query2, query3, panel_title_prefix)
 
 
 @app.route('/multi_lateral_interoperability_program_by_nation_search.html', methods=['post', 'get'])
