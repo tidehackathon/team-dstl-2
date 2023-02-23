@@ -21,7 +21,7 @@ GF_PORT = '3000'
 
 class MultiCheckboxField(SelectMultipleField):
     widget = widgets.ListWidget(prefix_label=False)
-    option_widget = widgets.CheckboxInput()
+    option_widget = widgets.RadioInput()
 
 
 class NationForm(FlaskForm):
