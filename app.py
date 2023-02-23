@@ -444,12 +444,13 @@ def cap_mat_by_nation():
     query9 = "' and c.maturity = 'Experimental' ) as table4 group by table4.capability_maturity"
     if nation_form.validate_on_submit() and capability_form.validate_on_submit():
         selected_nation = nation_form.nationResult.data
-        selected_capability = capability_form.capabilityResult.data
         selected_nation = change_Nation_Mapping(selected_nation)
+        selected_capability = capability_form.capabilityResult.data
         selected_capability = underscore_replacer(selected_capability)
         complete_query = query + selected_nation + query2 + selected_capability + query3 + selected_nation + query4 + selected_capability + query5 + selected_nation + query6 + selected_capability + query7 + selected_nation + query8 + selected_capability + query9
         # Create new panel in the grafana dashboard
-        gfapi.create_panel_on_grafana(GF_USERNAME, GF_PASSWORD, GF_IP_ADDR, GF_PORT, GF_DASHBOARD_UID, complete_query)
+        panel_title = "Capability Maturity for Nation {} for Capabilities <{}>".format(selected_nation, selected_capability)
+        gfapi.create_panel_on_grafana(GF_USERNAME, GF_PASSWORD, GF_IP_ADDR, GF_PORT, GF_DASHBOARD_UID, complete_query, panel_title)
         return render_template('compare_nation_results.html', nation1data=selected_nation, capabilityData=selected_capability)
     else:
         print("Validation Failed")
