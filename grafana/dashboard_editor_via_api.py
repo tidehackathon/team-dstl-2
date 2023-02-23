@@ -1,7 +1,7 @@
 import json
 import requests
 
-def generate_table_panel_dict(sql_input, id):
+def generate_table_panel_dict(sql_input, title, id):
     panel_dict = {
         'datasource': {'type': 'postgres', 'uid': 'P44368ADAD746BC27'}, 
         'fieldConfig': {
@@ -28,13 +28,13 @@ def generate_table_panel_dict(sql_input, id):
                         'groupBy': [{'property': {'type': 'string'}, 'type': 'groupBy'}], 'limit': 50}
             }
             ], 
-        'title': 'Panel Title', 
+        'title': title, 
         'type': 'table'
         }
     
     return panel_dict
 
-def add_table_panel_to_dashboard(sql_input, dashboard_dict):
+def add_table_panel_to_dashboard(sql_input, panel_title, dashboard_dict):
     # Find max panel id amongst existing panels
     list_of_ids = list()
     for panel in dashboard_dict['dashboard']['panels']:
@@ -43,7 +43,7 @@ def add_table_panel_to_dashboard(sql_input, dashboard_dict):
     print("max id : ", max_id)
 
     dashboard_dict['dashboard']['panels'].append(
-        generate_table_panel_dict(sql_input, max_id + 1)
+        generate_table_panel_dict(sql_input, panel_title, max_id + 1)
     )
 
     new_dashboard = dashboard_dict
@@ -92,13 +92,14 @@ def update_dashboard_on_grafana(username, password, ip_addr, port, dashboard_dic
 
     print(response)
 
-def create_panel_on_grafana(username, password, ip_addr, port, dashboard_uid, sql_text):
+def create_panel_on_grafana(username, password, ip_addr, port, dashboard_uid, sql_text, panel_title):
     # Get dashboard json and load into dictionary
     dashboard = get_dashboard(username, password, ip_addr, port, dashboard_uid)
 
     # Add new panel to dashboard
     dashboard = add_table_panel_to_dashboard(
         sql_text,
+        panel_title,
         dashboard
         )
 
