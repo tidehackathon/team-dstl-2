@@ -427,7 +427,7 @@ def cap_mat_by_nation():
              "inner join capability_tasks ct on ct.capability_id = c.id " \
              "inner join tasks t on t.id = ct.task_id where n.id = "
     query8 = " and t.name = '"
-    query9 = " and c.maturity = 'Experimental' ) as table4 group by table4.capability_maturity"
+    query9 = "' and c.maturity = 'Experimental' ) as table4 group by table4.capability_maturity"
     if nation_form.validate_on_submit() and capability_form.validate_on_submit():
         selected_nation = nation_form.nationResult.data
         selected_capability = capability_form.capabilityResult.data
