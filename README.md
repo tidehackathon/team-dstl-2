@@ -24,12 +24,16 @@ To start the program go to the root directory of the repo and run:
     $ cd <repo root dir>
     $ docker compose up --build
 
+Please see docker-compose.yml for more details.
+
 # Accessing the Flask Webapp and Grafana
 Open a web browser.  To access the Simple Editable Query EXecutor (SEQX) go to:
 
     localhost:5000/
 
 When operating the query creator follow the links on the main page to for the information you require.
+
+![Alt text](./screenshots/webapp_ss.png?raw=true "Title")
 
 To access the dashboard on Grafana go to:
 
@@ -45,9 +49,23 @@ Password
 
     admin
 
+![Alt text](./screenshots/grafana_login_ss.png?raw=true "Title")
+
 You will then be asked to update the password, you must set it to:
 
     qwerty
+
+# Using the Grafana dashboard
+
+Use the menu on the left-hand side to show all dashboards.
+Click on the dashboard 'Dashboard_for_Interoperability_dstl-2'.
+![Alt text](./screenshots/dashboard_menu_ss.png?raw=true "Title")
+
+In the dashboard, you will see the data panels.
+![Alt text](./screenshots/dashboard_ss.png?raw=true "Title")
+
+Each data panel can be edited, changing the way the data is displayed etc.
+![Alt text](./screenshots/edit_panel_ss.png?raw=true "Title")
 
 
 # Spin Down with docker compose
@@ -60,3 +78,13 @@ To stop the program cleanly please:
     $ docker compose down
 
 <li> Close all relevant instances of the terminal</li>
+
+
+# Change the Postgres DB configuration details
+
+To change the configurations to access the postgres database,
+edit the file:
+
+    <repo_root_dir>/grafana/datasources/postgres_ds.yml
+
+you will see relevant fields to edit.
