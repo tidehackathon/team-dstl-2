@@ -78,3 +78,13 @@ To stop the program cleanly please:
     $ docker compose down
 
 <li> Close all relevant instances of the terminal</li>
+
+
+# Change the Postgres DB configuration details
+
+To change the configurations to access the postgres database,
+edit the file:
+
+    <repo_root_dir>/grafana/datasources/postgres_ds.yml
+
+you will see relevant fields to edit.
