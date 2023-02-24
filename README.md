@@ -64,6 +64,10 @@ Click on the dashboard 'Dashboard_for_Interoperability_dstl-2'.
 In the dashboard, you will see the data panels.
 ![Alt text](./screenshots/dashboard_ss.png?raw=true "Title")
 
+Each data panel can be edited, changing the way the data is displayed etc.
+![Alt text](./screenshots/edit_panel_ss?raw=true "Title")
+
+
 # Spin Down with docker compose
 
 To stop the program cleanly please:
