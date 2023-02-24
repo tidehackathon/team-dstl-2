@@ -13,7 +13,8 @@ The architecture consists of two main components:
 1. Simple Editable Query EXecutor (SEQX): A Flask app which allows a stakeholder to
 create pertinent queries relating to interoperability.  Send HTTP API requests to
 the Grafana API to create new dashboard panels.
-2. Grafana Dashboard: 
+2. Grafana Dashboard: A dashboard interface for presenting the query results in a 
+flexible manner in real-time.
 
 ![Alt text](./dstl_2_archi_diagram.png?raw=true "Title")
 
